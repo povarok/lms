@@ -17,6 +17,6 @@ urlpatterns = [
     # ex: /polls/primer
     url(r'^primer$', views.primer, name='primer'),
     
-    
+
     
 ]

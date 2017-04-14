@@ -1,6 +1,6 @@
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
-
+from django.shortcuts import render
 # Опять же, спасибо django за готовую форму аутентификации.
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -38,7 +38,7 @@ class LoginFormView(FormView):
     template_name = "mysite/login.html"
 
     # В случае успеха перенаправим на главную.
-    success_url = "/"
+    success_url = "/home"
 
     def form_valid(self, form):
         # Получаем объект пользователя на основе введённых в форму данных.
@@ -47,6 +47,11 @@ class LoginFormView(FormView):
         # Выполняем аутентификацию пользователя.
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
+
+def home(request):
+    #template_name = "mysite/dom.html"
+    success_url = "/login"
+    return render(request, 'mysite/dom.html')
 
 class LogoutView(View):
     def get(self, request):
