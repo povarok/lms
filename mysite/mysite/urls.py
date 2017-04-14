@@ -15,11 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from mysite.views import RegisterFormView
+from mysite.views import RegisterFormView, LoginFormView, LogoutView 
 
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^register/$', RegisterFormView.as_view()),
+    url(r'^login/$', LoginFormView.as_view()),
+    url(r'^logout/$', LogoutView.as_view()),
     
 ]
