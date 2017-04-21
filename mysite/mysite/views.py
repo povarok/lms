@@ -10,7 +10,9 @@ from django.contrib.auth import login, logout
 
 from django.views.generic.base import View
 from django.http import HttpResponseRedirect
-
+from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
+from polls.models import ExcersiseTemplate
 
 
 class RegisterFormView(FormView):
@@ -49,9 +51,13 @@ class LoginFormView(FormView):
         return super(LoginFormView, self).form_valid(form)
 
 def home(request):
+
     #template_name = "mysite/dom.html"
     success_url = "/login"
-    return render(request, 'mysite/dom.html')
+    p=ExcersiseTemplate.objects.all()
+
+    return render(request, 'mysite/dom.html',{
+            'text': p[0].text})
 
 class LogoutView(View):
     def get(self, request):
@@ -59,4 +65,6 @@ class LogoutView(View):
         logout(request)
 
         # После чего, перенаправляем пользователя на главную страницу.
-        return HttpResponseRedirect("/login")
+        return HttpResponseRedirect("/home")
+
+#def user (request, user_id):

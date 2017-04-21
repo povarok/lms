@@ -70,7 +70,7 @@ def primer(request):
         
     return render(request, 'polls/primer.html', {
             'sl': p.sl,
-            'sll': p.sll,'znak' : p.znak,'form' : form})
+            'sll': p.sll,'znak' : p.znak,'form' : form, 'number' : summmm})
 
 
 

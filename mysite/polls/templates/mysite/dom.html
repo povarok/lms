@@ -5,21 +5,26 @@
   <title>Главная</title>
  </head>   
  <body>
-  <div id="big">
-   <div id="zagolovok">
+
     <p><h2 align="center" >Главная страница</h2></p>
-    <div id="text_sleva">
+
+    <p><font >           {% if user.is_authenticated %}
+            <p>Welcome, {{ user.username }}. Thanks for logging in.
+        <div id="buttons">
+		<a href="http://localhost:8000/logout/" align="center"><button><h3>Выход</button></a></h3></form></p>
+        </div>
+        {% else %}
+            <p>Welcome, new user. Please log in.
+        <div id="buttons">
+		<a href="http://localhost:8000/login/" align="center"><button><h3>Авторизация</button></a></h3></form></p>
+        {% endif %}</font>
+		</p>
+        </div>
 	<p><font >Здесь будет текст стартовой страницы, но пока его нет</font></p>
 	<p><font >Нажав на кнопку ниже, вы попадете на страницу входа в систему</font></p>
 	<p><font >Естественно потом она(кнопка) переедет, но не сегодня</font></p>
 	<p><font >Кстати, если вы еще не зарегистрированы, Вам любезно предложат это сделать</font></p>
 	<p><font >Еще у нас можно порешать случайно сгенерированные примерчики</font></p>
-    </div>
-   </div>
-
-	<div id="buttons">
-		<a href="http://localhost:8000/login/" align="center"><button><h3>Авторизация</button></h3></form>
-	</div>
-   </div>
+    <p>{{user.id}}</p>
+    <p>{{text}}</p>
  </body>
-</html>
