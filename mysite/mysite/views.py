@@ -12,7 +12,7 @@ from django.views.generic.base import View
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate
+from polls.models import ExcersiseTemplate, Replacers
 
 
 class RegisterFormView(FormView):
@@ -51,13 +51,15 @@ class LoginFormView(FormView):
         return super(LoginFormView, self).form_valid(form)
 
 def home(request):
-
+    # как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
     #template_name = "mysite/dom.html"
     success_url = "/login"
-    p=ExcersiseTemplate.objects.all()
+    template=ExcersiseTemplate.objects.all()
+    replaser = Replacers.objects.all()
+
 
     return render(request, 'mysite/dom.html',{
-            'text': p[0].text})
+            'text': template[0].text})
 
 class LogoutView(View):
     def get(self, request):
