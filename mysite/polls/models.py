@@ -32,6 +32,17 @@ class Primer (models.Model):
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Answer', max_length=100)
 
+class ExcersiseTemplate(models.Model):
+    text = models.TextField (max_length=1000)
+    name = models.CharField (max_length=200)
+    correctAnswer = models.CharField (max_length=200)
+    type = models.CharField (max_length=200)
+    grade = models.IntegerField ()
+
+class Replacers(models.Model):
+    type = models.CharField (max_length=200)
+    value = models.CharField (max_length=200)
+
 
 
 
