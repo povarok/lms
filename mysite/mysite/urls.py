@@ -24,5 +24,5 @@ urlpatterns = [
     url(r'^login/$', LoginFormView.as_view()),
     url(r'^logout/$', LogoutView.as_view()),
     url(r'^home/$', home, name='home'),
-    url(r'P<user.id>[0-9]', home)
+    url(r'^(?P<user_id>[0-9]+)/', home)
 ]

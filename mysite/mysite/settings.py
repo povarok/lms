@@ -101,7 +101,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+STATICFILES_DIRS = (
+    r'C:/Users/Yulia/Desktop/lms-master 2/mysite/polls/templates/mysite',
+)
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 

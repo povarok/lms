@@ -50,16 +50,34 @@ class LoginFormView(FormView):
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
 
-def home(request):
+
+def home(request, user_id):
+    if request.user.id != int(user_id):
+        #raise HTTP404
+        pass
+    
     # как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
     #template_name = "mysite/dom.html"
     success_url = "/login"
-    template=ExcersiseTemplate.objects.all()
-    replaser = Replacers.objects.all()
-
-
+    template = ExcersiseTemplate.objects.filter(type="Задачи SVT").order_by('?').first()
+    subs = template.get_subs()
+    print (subs)
+    print (subs[0][0])
+    #i=0
+    #replacer = [0]*4
+    temp_text=template.text
+    for name, number in subs:
+        temp_text = temp_text.replace("{{"+name+number+"}}", Replacers.objects.filter(type=name).order_by("?").first().value)
+        print (temp_text)
+        print(name,  number, Replacers.objects.filter(type=name).order_by("?").first().value)
+        #replacer[i]= Replacers.objects.filter(type=name).order_by("?").first().value
+        #i+=1
+    
+    
+    
+     
     return render(request, 'mysite/dom.html',{
-            'text': template[0].text})
+            'text': temp_text,})
 
 class LogoutView(View):
     def get(self, request):
