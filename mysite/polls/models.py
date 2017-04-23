@@ -3,7 +3,6 @@ from django.utils.encoding import python_2_unicode_compatible
 import datetime
 from django.utils import timezone
 from django import forms
-import re
 
 
 # Create your models here.
@@ -38,10 +37,8 @@ class ExcersiseTemplate(models.Model):
     name = models.CharField (max_length=200)
     correctAnswer = models.CharField (max_length=200)
     type = models.CharField (max_length=200)
-    grade = models.IntegerField()
-
-    def get_subs(self):
-        return re.findall(r'{{\s*([a-z]+)(\d+)\s*}}', self.text)
+    grade = models.IntegerField ()
+    subject = models.CharField (max_length=200, default = "Null")
 
 class Replacers(models.Model):
     type = models.CharField (max_length=200)
