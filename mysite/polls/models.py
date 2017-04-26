@@ -40,8 +40,13 @@ class ExcersiseTemplate(models.Model):
     type = models.CharField (max_length=200)
     grade = models.IntegerField ()
     subject = models.CharField (max_length=200, default = "Null")
+
     def get_subs(self):
          return re.findall(r'{{\s*([a-z]+)(\d+)\s*}}', self.text)
+
+    def get_answer(self):
+         return re.findall(r'{{\s*([a-z]+)(\d+)\s*}}', self.correctAnswer)
+
     def __str__(self):
         return self.name
 class Replacers(models.Model):

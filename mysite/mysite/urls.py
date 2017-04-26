@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from mysite.views import RegisterFormView, LoginFormView, LogoutView, home
+from mysite.views import RegisterFormView, LoginFormView, LogoutView, home, lms #, home1
 
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^register/$', RegisterFormView.as_view()),
     url(r'^login/$', LoginFormView.as_view()),
     url(r'^logout/$', LogoutView.as_view()),
-    url(r'^home/$', home, name='home'),
-    url(r'^(?P<user_id>[0-9]+)/', home)
+    #url(r'^home/$', home1, name='home'),
+    url(r'^home/(?P<user_id>[0-9]+)/', home, name="homeid"),
+    url(r'^$', lms)
 ]

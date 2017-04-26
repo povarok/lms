@@ -9,10 +9,12 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 
 from django.views.generic.base import View
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
 from polls.models import ExcersiseTemplate, Replacers
+
+
 
 
 class RegisterFormView(FormView):
@@ -38,38 +40,58 @@ class LoginFormView(FormView):
 
     # Аналогично регистрации, только используем шаблон аутентификации.
     template_name = "mysite/login.html"
-
+    #id = getId()
     # В случае успеха перенаправим на главную.
-    success_url = "/home"
+    success_url = "/home/" # + user.id <------ где его взять?
+    #TODO как сделать корректный редирект на страницу вида /home/user.id ? ? ?
 
     def form_valid(self, form):
         # Получаем объект пользователя на основе введённых в форму данных.
         self.user = form.get_user()
 
+        # id = self.user.id
+        # return (id)
+
         # Выполняем аутентификацию пользователя.
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
+
+# def getId(request):
+#     id = request.user.id
+#     return (id)
+
 
 
 def home(request, user_id):
     if request.user.id != int(user_id):
         #raise HTTP404
-        pass
+        raise Http404("Вы заходите не на ту страницу пользователя")
+
     
-    # как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
+    # /РЕШЕНО/ как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
     #template_name = "mysite/dom.html"
     success_url = "/login"
     template = ExcersiseTemplate.objects.filter(type="Задачи SVT").order_by('?').first()
     subs = template.get_subs()
+    answer = template.get_answer ()
+    print ('как выглядят ответы',answer)
     print (subs)
     print (subs[0][0])
     #i=0
     #replacer = [0]*4
     temp_text=template.text
+    temp_answer = template.correctAnswer
     for name, number in subs:
-        temp_text = temp_text.replace("{{"+name+number+"}}", Replacers.objects.filter(type=name).order_by("?").first().value)
+        replacer = Replacers.objects.filter(type=name).order_by("?").first().value
+        temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
         print (temp_text)
-        print(name,  number, Replacers.objects.filter(type=name).order_by("?").first().value)
+        print(name,  number, replacer)
+        for nameAns, numberAns in subs:
+            if name == nameAns and number == numberAns:
+                temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", int(replacer))
+
+
+
         #replacer[i]= Replacers.objects.filter(type=name).order_by("?").first().value
         #i+=1
     
@@ -77,7 +99,7 @@ def home(request, user_id):
     
      
     return render(request, 'mysite/dom.html',{
-            'text': temp_text,})
+            'text': temp_text,'answer' : temp_answer})
 
 class LogoutView(View):
     def get(self, request):
@@ -88,3 +110,6 @@ class LogoutView(View):
         return HttpResponseRedirect("/home")
 
 #def user (request, user_id):
+
+def lms (request):
+    return render(request, 'mysite/lms.html')
