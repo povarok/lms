@@ -52,6 +52,8 @@ class ExcersiseTemplate(models.Model):
 class Replacers(models.Model):
     type = models.CharField (max_length=200)
     value = models.CharField (max_length=200)
+    def __str__(self):
+        return self.type
 
 
 

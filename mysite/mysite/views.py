@@ -71,7 +71,9 @@ def home(request, user_id):
     # /РЕШЕНО/ как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
     #template_name = "mysite/dom.html"
     success_url = "/login"
-    template = ExcersiseTemplate.objects.filter(type="Задачи SVT").order_by('?').first()
+    # раскомментируй строку снизу, чтобы отображать шаблон по фильтру
+    # template = ExcersiseTemplate.objects.filter(name="Повар").order_by('?').first()
+    template = ExcersiseTemplate.objects.order_by('?').first()
     subs = template.get_subs()
     answer = template.get_answer ()
     print ('как выглядят ответы',answer)
@@ -102,7 +104,7 @@ def home(request, user_id):
     
      
     return render(request, 'mysite/dom.html',{
-            'text': temp_text,'answer' : temp_answer})
+            'text': temp_text,'answer' : temp_answer, 'name' : temp_name})
 
 class LogoutView(View):
     def get(self, request):
