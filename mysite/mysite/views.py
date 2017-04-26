@@ -86,10 +86,12 @@ def home(request, user_id):
         temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
         print (temp_text)
         print(name,  number, replacer)
-        for nameAns, numberAns in subs:
+        for nameAns, numberAns in answer:
             if name == nameAns and number == numberAns:
-                temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", int(replacer))
+                temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
 
+    #temp_answer = eval(temp_answer)
+    temp_answer = float("{0:.2f}".format(eval(temp_answer)))
 
 
         #replacer[i]= Replacers.objects.filter(type=name).order_by("?").first().value
