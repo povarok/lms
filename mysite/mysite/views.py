@@ -114,7 +114,12 @@ class LogoutView(View):
         # После чего, перенаправляем пользователя на главную страницу.
         return HttpResponseRedirect("/home")
 
-#def user (request, user_id):
+def home1 (request):
+    id = request.user.id
+    idHome = "/home/" + str(request.user.id)
+    if id == None:
+        idHome = '/login/'
+    return HttpResponseRedirect(idHome)
 
 def lms (request):
     return render(request, 'mysite/lms.html')
