@@ -92,6 +92,7 @@ def home(request, user_id):
 
     #temp_answer = eval(temp_answer)
     temp_answer = float("{0:.2f}".format(eval(temp_answer)))
+    temp_name = template.name
 
 
         #replacer[i]= Replacers.objects.filter(type=name).order_by("?").first().value
