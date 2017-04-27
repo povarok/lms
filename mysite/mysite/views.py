@@ -12,13 +12,16 @@ from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate, Replacers
+from polls.models import ExcersiseTemplate, Replacers, NameForm
+#from django.core.mail import send_mail
+
 
 
 
 
 class RegisterFormView(FormView):
     form_class = UserCreationForm
+    print (form_class)
 
     # Ссылка, на которую будет перенаправляться пользователь в случае успешной регистрации.
     # В данном случае указана ссылка на страницу входа для зарегистрированных пользователей.
@@ -67,34 +70,73 @@ def home(request, user_id):
         #raise HTTP404
         raise Http404("Вы заходите не на ту страницу пользователя")
 
-    
+    numberOfTemplatesUser = 0
+    stroka = []
     # /РЕШЕНО/ как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
     #template_name = "mysite/dom.html"
     success_url = "/login"
     # раскомментируй строку снизу, чтобы отображать шаблон по фильтру
     # template = ExcersiseTemplate.objects.filter(name="Повар").order_by('?').first()
-    template = ExcersiseTemplate.objects.order_by('?').first()
-    subs = template.get_subs()
-    answer = template.get_answer ()
-    print ('как выглядят ответы',answer)
-    print (subs)
-    print (subs[0][0])
+    def templates():
+        template = ExcersiseTemplate.objects.order_by('?').first()
+        subs = template.get_subs()
+        answer = template.get_answer ()
+        # print ('как выглядят ответы',answer)
+        # print (subs)
+        # print (subs[0][0])
     #i=0
     #replacer = [0]*4
-    temp_text=template.text
-    temp_answer = template.correctAnswer
-    for name, number in subs:
-        replacer = Replacers.objects.filter(type=name).order_by("?").first().value
-        temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
-        print (temp_text)
-        print(name,  number, replacer)
-        for nameAns, numberAns in answer:
-            if name == nameAns and number == numberAns:
-                temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
+        temp_text=template.text
+        temp_answer = template.correctAnswer
+        for name, number in subs:
+            replacer = Replacers.objects.filter(type=name).order_by("?").first().value
+            temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
+            # print (temp_text)
+            # print(name,  number, replacer)
+            for nameAns, numberAns in answer:
+                if name == nameAns and number == numberAns:
+                    temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
 
     #temp_answer = eval(temp_answer)
-    temp_answer = float("{0:.2f}".format(eval(temp_answer)))
-    temp_name = template.name
+        temp_answer = float("{0:.2f}".format(eval(temp_answer)))
+
+        temp_name = template.name
+        return temp_text, temp_answer, temp_name
+
+    x = templates()
+    #print ('ВЫВОД TEMPLATES',x)
+    #print ('ВЫВОД TEMPLATES',x[0])
+
+
+    if request.method == 'POST':
+        numberOfTemplates = NameForm(request.POST)
+
+        if numberOfTemplates.is_valid():
+            numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
+            stroka = []
+            for i in range(int(numberOfTemplatesUser)):
+                y = templates()
+                stroka.append(str(y[0])+'\n <br>'+str(y[1])+'\n <br>'+str(y[2])+'\n <br>')
+                print (stroka)
+
+                #print ('пишу  ',i)
+
+
+
+    else:
+        numberOfTemplates = NameForm()
+
+
+
+
+
+
+    # if request.method == 'POST':
+    #     form = forms(request.POST)
+    #     if form.is_valid():
+    #
+    #         request.user.email = form
+    # userMail = request.user.email
 
 
         #replacer[i]= Replacers.objects.filter(type=name).order_by("?").first().value
@@ -104,7 +146,7 @@ def home(request, user_id):
     
      
     return render(request, 'mysite/dom.html',{
-            'text': temp_text,'answer' : temp_answer, 'name' : temp_name})
+            'text': x[0],'answer' : x[1], 'name' : x[2], 'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
 
 class LogoutView(View):
     def get(self, request):
@@ -123,3 +165,7 @@ def home1 (request):
 
 def lms (request):
     return render(request, 'mysite/lms.html')
+
+# def mail(request):
+#     send_mail('Subject here', 'Here is the message.', 'vasily.komarov1997@gmail.com',
+#     ['ivan44050@gmail.com'], fail_silently=False)
