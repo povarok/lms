@@ -26,7 +26,13 @@
 	<p><font >Кстати, если вы еще не зарегистрированы, Вам любезно предложат это сделать</font></p>
 	<p><font >Еще у нас можно порешать случайно сгенерированные примерчики</font></p>
 
-    <p>user.id : {{user.id}}</p>
+    <!--<p>user.id : {{user.id}}</p>-->
+
+    пример созданного задания:
+    <br>
+
+
+
     <table border="5"> <td>
     <p>Задача: {{name}}</p>
     <p>{{text}}</p>
@@ -34,12 +40,20 @@
         </td></table>
 
 
-    <form action="home" method="post">
-        {% csrf_token %}
-        {{ number }}
-        <input type="submit" value="Submit" />
-        </form>
-    {{stroka}}
+    <!--<form action="home" method="post">-->
+        <!--{% csrf_token %}-->
+        <!--{{ number }}-->
+        <!--<input type="submit" value="Submit" />-->
+    <!--</form>-->
+
+    {% for o in stroka %}
+        {{o|linebreaks }}
+        --------------------------------------------
+    {% endfor %}
+
+    <input type="submit" value="создать варианты заданий" onclick=" location.href=' http://127.0.0.1:8000/temp_make'  ">
+
+
 
 
  </body>

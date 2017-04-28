@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание шаблонов по вариантам</title>
+
+
+</head>
+<body>
+
+    Введите, сколько вариантов нужно сгенерировать
+
+    <form action="temp_make" method="post">
+        {% csrf_token %}
+        {{ number }}
+        <input type="submit" value="Submit" />
+    </form>
+
+    <input type="submit" value="Перейти в home" onclick=" location.href=' http://127.0.0.1:8000/home'  ">
+
+    {% for o in stroka %}
+        {{o|linebreaks }}
+        --------------------------------------------
+    {% endfor %}
+
+</body>
+</html>

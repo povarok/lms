@@ -116,7 +116,7 @@ def home(request, user_id):
             stroka = []
             for i in range(int(numberOfTemplatesUser)):
                 y = templates()
-                stroka.append(str(y[0])+'\n <br>'+str(y[1])+'\n <br>'+str(y[2])+'\n <br>')
+                stroka.append('Название задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
                 print (stroka)
 
                 #print ('пишу  ',i)
@@ -147,6 +147,55 @@ def home(request, user_id):
      
     return render(request, 'mysite/dom.html',{
             'text': x[0],'answer' : x[1], 'name' : x[2], 'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
+
+def temp_make(request):
+    numberOfTemplatesUser = 0
+    stroka = []
+
+    def templates():
+        template = ExcersiseTemplate.objects.order_by('?').first()
+        subs = template.get_subs()
+        answer = template.get_answer ()
+        temp_text=template.text
+        temp_answer = template.correctAnswer
+        for name, number in subs:
+            replacer = Replacers.objects.filter(type=name).order_by("?").first().value
+            temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
+            # print (temp_text)
+            # print(name,  number, replacer)
+            for nameAns, numberAns in answer:
+                if name == nameAns and number == numberAns:
+                    temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
+
+    #temp_answer = eval(temp_answer)
+        temp_answer = float("{0:.2f}".format(eval(temp_answer)))
+
+        temp_name = template.name
+        return temp_text, temp_answer, temp_name
+
+    x = templates()
+
+    if request.method == 'POST':
+        numberOfTemplates = NameForm(request.POST)
+        print (numberOfTemplates)
+
+        if numberOfTemplates.is_valid():
+            numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
+            stroka = []
+            for i in range(int(numberOfTemplatesUser)):
+                y = templates()
+                stroka.append('Вариант '+str(i+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
+                # print (stroka)
+    else:
+        numberOfTemplates = NameForm()
+
+    return render(request, 'mysite/temp_make.html',{
+     'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
+
+
+
+
+
 
 class LogoutView(View):
     def get(self, request):
