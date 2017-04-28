@@ -38,7 +38,10 @@ class RegisterFormView(FormView):
         return super(RegisterFormView, self).form_valid(form)
 
 
+
 class LoginFormView(FormView):
+
+
     form_class = AuthenticationForm
 
     # Аналогично регистрации, только используем шаблон аутентификации.
@@ -68,7 +71,7 @@ class LoginFormView(FormView):
 def home(request, user_id):
     if request.user.id != int(user_id):
         #raise HTTP404
-        raise Http404("Вы заходите не на ту страницу пользователя")
+        raise Http404("Вы заходите не на свою страницу пользователя / не авторизованы")
 
     numberOfTemplatesUser = 0
     stroka = []

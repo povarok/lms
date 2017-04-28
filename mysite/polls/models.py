@@ -4,6 +4,7 @@ import datetime
 from django.utils import timezone
 from django import forms
 import re
+from django.http import HttpResponseRedirect, Http404
 
 
 # Create your models here.
@@ -31,7 +32,9 @@ class Primer (models.Model):
     znak = models.CharField(max_length=200)
 
 class NameForm(forms.Form):
-    your_name = forms.CharField(label='Answer', max_length=100)
+    your_name = forms.CharField(label='', max_length=100)
+
+
 
 class ExcersiseTemplate(models.Model):
     text = models.TextField (max_length=1000)
