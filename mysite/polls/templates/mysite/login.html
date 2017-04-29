@@ -1,9 +1,20 @@
-    <form action="" method="post">
-      {% csrf_token %}
-       
-      {{ form.as_p }}
-      <input type="submit" value="Login" />
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="{% static 'dom.css' %}">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Login</title>
+    </head>
+    <body>
+        <br>
+            <form action="" method="post">
+            {% csrf_token %}
 
-    
-    </form>
-<a href="http://localhost:8000/register/" align="left"><button>Регистрация</button></form>
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Войти</button>
+            <a href="http://localhost:8000/register/"><button type="button" class="btn btn-primary">Регистрация</button></a>
+            </form>
+    </body>
+</html>

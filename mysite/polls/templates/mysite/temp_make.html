@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <title>Создание шаблонов по вариантам</title>
 
 
@@ -13,10 +15,10 @@
     <form action="temp_make" method="post">
         {% csrf_token %}
         {{ number }}
-        <input type="submit" value="Submit" />
+        <button type="submit" class="btn btn-primary">Cоздать варианты заданий</button>
     </form>
 
-    <input type="submit" value="Перейти в home" onclick=" location.href=' http://127.0.0.1:8000/home'  ">
+    <a href=' http://127.0.0.1:8000/home'><button type="submit" class="btn btn-primary">Домой</button></a>
 
     {% for o in stroka %}
         {{o|linebreaks }}

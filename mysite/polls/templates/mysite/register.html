@@ -1,9 +1,20 @@
+<html>
+ <head>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Register</title>
+ </head>
+ <body>
+   <p class="text-center">
     <form action="" method="post">
       {% csrf_token %}
        
       {{ form.as_p }}
-      <input type="submit" value="Register" />
-
+      <button type="submit" class="btn btn-primary">Регистрация</button>
     
     </form>
+   </p>
+ </body>
+</html>
 

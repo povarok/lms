@@ -1,41 +1,35 @@
+{% load staticfiles %}
 <html>
  <head>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="dom.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{% static 'dom.css' %}">
   <title>Главная</title>
  </head>   
  <body>
 
-    <p><h2 align="center" >Главная страница</h2></p>
+    <p><h1 align="center" >Главная страница</h1></p>
 
-    <p><font >           {% if user.is_authenticated %}
-            <p>Welcome, {{ user.username }}. Thanks for logging in.
+    <p><font >
+            <p class="text-center">Welcome, {{ user.username }}. Thanks for logging in.
         <div id="buttons">
-		<a href="http://localhost:8000/logout/" align="center"><button><h3>Выход</button></a></h3></form></p>
+        <a href="http://127.0.0.1:8000/temp_make"><button type="submit" class="btn btn-primary">Cоздать варианты заданий</button></a>
+		<a href="http://localhost:8000/logout/"><button type="button" class="btn btn-primary">Выход</button></a></form>
         </div>
-        {% else %}
-            <p>Welcome, new user. Please log in.
-        <div id="buttons">
-		<a href="http://localhost:8000/login/" align="center"><button><h3>Авторизация</button></a></h3></form></p>
-        {% endif %}</font>
-		</p>
-        </div>
-	<p><font >Здесь будет текст стартовой страницы, но пока его нет</font></p>
-
-
+	<p class="text-center">Здесь будет текст стартовой страницы, но пока его нет</p>
+    <br>
+    <p class="text-center">Пример созданного задания:</p>
 
     <!--<p>user.id : {{user.id}}</p>-->
 
-    пример созданного задания:
-    <br>
 
 
-
-    <table border="5"> <td>
+    <table border="2" align="center"> <td>
     <p>Задача: {{name}}</p>
     <p>{{text}}</p>
     <p>Ответ: {{answer}}</p>
-        </td></table>
+    </td></table>
 
 
     <!--<form action="home" method="post">-->
@@ -49,7 +43,7 @@
         --------------------------------------------
     {% endfor %}
 
-    <input type="submit" value="создать варианты заданий" onclick=" location.href=' http://127.0.0.1:8000/temp_make'  ">
+
 
 
 
