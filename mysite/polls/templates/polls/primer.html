@@ -1,9 +1,12 @@
-{{sl}} {{znak}} {{sll}} 
+
+
 <form action="primer" method="post">
+    {{sl}} {{znak}} {{sll}} =
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="Answer" />
-    вы ввели {{number}}
+    <input type="submit" value="Ответить" />
+    {{answerCheck}} (<== вот сюда прилепить картинку галочка/крестик)
+
 </form>
 
 
