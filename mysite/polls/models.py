@@ -33,6 +33,8 @@ class Primer (models.Model):
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='', max_length=100)
+    pole = forms.CharField(label='', max_length=100)
+
 
 
 
@@ -52,12 +54,32 @@ class ExcersiseTemplate(models.Model):
 
     def __str__(self):
         return self.name
+
 class Replacers(models.Model):
     type = models.CharField (max_length=200)
     value = models.CharField (max_length=200)
     def __str__(self):
         return self.type
 
+# перенесена функция получения сгенерированного варианта из отдельных страниц во views, чтобы не прописывать для каждой страницы
+def templates():
+        template = ExcersiseTemplate.objects.order_by('?').first()
+        subs = template.get_subs()
+        answer = template.get_answer ()
+        temp_text=template.text
+        temp_answer = template.correctAnswer
+        for name, number in subs:
+            replacer = Replacers.objects.filter(type=name).order_by("?").first().value
+            temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
+            # print (temp_text)
+            # print(name,  number, replacer)
+            for nameAns, numberAns in answer:
+                if name == nameAns and number == numberAns:
+                    temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
 
+    #temp_answer = eval(temp_answer)
+        temp_answer = float("{0:.2f}".format(eval(temp_answer)))
 
+        temp_name = template.name
+        return temp_text, temp_answer, temp_name
 

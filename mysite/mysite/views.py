@@ -12,7 +12,7 @@ from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate, Replacers, NameForm
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates
 #from django.core.mail import send_mail
 
 
@@ -80,31 +80,32 @@ def home(request, user_id):
     success_url = "/login"
     # раскомментируй строку снизу, чтобы отображать шаблон по фильтру
     # template = ExcersiseTemplate.objects.filter(name="Повар").order_by('?').first()
-    def templates():
-        template = ExcersiseTemplate.objects.order_by('?').first()
-        subs = template.get_subs()
-        answer = template.get_answer ()
-        # print ('как выглядят ответы',answer)
-        # print (subs)
-        # print (subs[0][0])
-    #i=0
-    #replacer = [0]*4
-        temp_text=template.text
-        temp_answer = template.correctAnswer
-        for name, number in subs:
-            replacer = Replacers.objects.filter(type=name).order_by("?").first().value
-            temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
-            # print (temp_text)
-            # print(name,  number, replacer)
-            for nameAns, numberAns in answer:
-                if name == nameAns and number == numberAns:
-                    temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
 
-    #temp_answer = eval(temp_answer)
-        temp_answer = float("{0:.2f}".format(eval(temp_answer)))
-
-        temp_name = template.name
-        return temp_text, temp_answer, temp_name
+    # def templates():
+    #     template = ExcersiseTemplate.objects.order_by('?').first()
+    #     subs = template.get_subs()
+    #     answer = template.get_answer ()
+    #     # print ('как выглядят ответы',answer)
+    #     # print (subs)
+    #     # print (subs[0][0])
+    # #i=0
+    # #replacer = [0]*4
+    #     temp_text=template.text
+    #     temp_answer = template.correctAnswer
+    #     for name, number in subs:
+    #         replacer = Replacers.objects.filter(type=name).order_by("?").first().value
+    #         temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
+    #         # print (temp_text)
+    #         # print(name,  number, replacer)
+    #         for nameAns, numberAns in answer:
+    #             if name == nameAns and number == numberAns:
+    #                 temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
+    #
+    # #temp_answer = eval(temp_answer)
+    #     temp_answer = float("{0:.2f}".format(eval(temp_answer)))
+    #
+    #     temp_name = template.name
+    #     return temp_text, temp_answer, temp_name
 
     x = templates()
     #print ('ВЫВОД TEMPLATES',x)
@@ -155,32 +156,32 @@ def temp_make(request):
     numberOfTemplatesUser = 0
     stroka = []
 
-    def templates():
-        template = ExcersiseTemplate.objects.order_by('?').first()
-        subs = template.get_subs()
-        answer = template.get_answer ()
-        temp_text=template.text
-        temp_answer = template.correctAnswer
-        for name, number in subs:
-            replacer = Replacers.objects.filter(type=name).order_by("?").first().value
-            temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
-            # print (temp_text)
-            # print(name,  number, replacer)
-            for nameAns, numberAns in answer:
-                if name == nameAns and number == numberAns:
-                    temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
-
-    #temp_answer = eval(temp_answer)
-        temp_answer = float("{0:.2f}".format(eval(temp_answer)))
-
-        temp_name = template.name
-        return temp_text, temp_answer, temp_name
+    # def templates():
+    #     template = ExcersiseTemplate.objects.order_by('?').first()
+    #     subs = template.get_subs()
+    #     answer = template.get_answer ()
+    #     temp_text=template.text
+    #     temp_answer = template.correctAnswer
+    #     for name, number in subs:
+    #         replacer = Replacers.objects.filter(type=name).order_by("?").first().value
+    #         temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
+    #         # print (temp_text)
+    #         # print(name,  number, replacer)
+    #         for nameAns, numberAns in answer:
+    #             if name == nameAns and number == numberAns:
+    #                 temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
+    #
+    # #temp_answer = eval(temp_answer)
+    #     temp_answer = float("{0:.2f}".format(eval(temp_answer)))
+    #
+    #     temp_name = template.name
+    #     return temp_text, temp_answer, temp_name
 
     x = templates()
 
     if request.method == 'POST':
         numberOfTemplates = NameForm(request.POST)
-        print (numberOfTemplates)
+        #print (numberOfTemplates)
 
         if numberOfTemplates.is_valid():
             numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']

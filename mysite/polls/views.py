@@ -50,7 +50,7 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 def primer(request):
-    
+    # for i in range (1,10):
     ch = (randint(1,10))
     chh = (randint(1,10))
     summm = ch+chh
@@ -60,7 +60,8 @@ def primer(request):
     answerCheck = 'Вы еще не ввели ответ'
     if request.method == 'POST':
         form = NameForm(request.POST)
-        
+        form.pole = '5'
+
         if form.is_valid():
             summmm = form.cleaned_data['your_name']
             print (summmm,'не из бд',p.summ)
@@ -70,7 +71,7 @@ def primer(request):
                 answerCheck = 'Правильно'
             else:
                 answerCheck = 'Не правильно'
-                
+
 
     else:
         form = NameForm()
