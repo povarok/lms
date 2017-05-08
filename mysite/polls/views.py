@@ -70,7 +70,7 @@ def primer(request):
             if int(summmm) == int(summa.summ):
                 answerCheck = 'Правильно'
             else:
-                answerCheck = 'Не правильно'
+                answerCheck = 'Неправильно'
 
 
     else:
