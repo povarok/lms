@@ -159,65 +159,50 @@ def temp_make(request):
     stroka = []
     check = ''
     test = ExcersiseTemplate.objects.all()
-    # def templates():
-    #     template = ExcersiseTemplate.objects.order_by('?').first()
-    #     subs = template.get_subs()
-    #     answer = template.get_answer ()
-    #     temp_text=template.text
-    #     temp_answer = template.correctAnswer
-    #     for name, number in subs:
-    #         replacer = Replacers.objects.filter(type=name).order_by("?").first().value
-    #         temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
-    #         # print (temp_text)
-    #         # print(name,  number, replacer)
-    #         for nameAns, numberAns in answer:
-    #             if name == nameAns and number == numberAns:
-    #                 temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
-    #
-    # #temp_answer = eval(temp_answer)
-    #     temp_answer = float("{0:.2f}".format(eval(temp_answer)))
-    #
-    #     temp_name = template.name
-    #     return temp_text, temp_answer, temp_name
-    # form3 = ChoiseForm()
-    # print ('form3', form3)
-    x = templates(check)
+    print (numberOfTasks)
+    form3 = ChoiseForm(request.POST)
 
     if request.method == 'POST':
         numberOfTemplates = NameForm(request.POST)
         #print (numberOfTemplates)
-        form2 = AnotherForm(request.POST)
+        # form2 = AnotherForm(request.POST)
+        #form2 = NameForm(request.POST)
+        #print ('form2',form2)
         form3 = ChoiseForm(request.POST)
-        if form2.is_valid():
-            numberOfTasks = form2.cleaned_data['field']
+        # if form2.is_valid():
+        #     numberOfTasks = form2.cleaned_data['fieldn']
+        #     print (numberOfTasks)
         if form3.is_valid():
-            print ('check1',check)
+            # print ('check1',check)
             check = form3.cleaned_data['field']
             if check == None:
                 check = ''
-            print ('check2',check)
+            # print ('check2',check)
 
         if numberOfTemplates.is_valid():
             numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
-            print ('ВАСЯ', numberOfTemplatesUser)
+            numberOfTasks = numberOfTemplates.cleaned_data['fieldn']
+            # print ('sd', numberOfTemplatesUser)
             if numberOfTemplatesUser == None:
                 numberOfTemplatesUser = 0
             stroka = []
             for i in range(int(numberOfTemplatesUser)):
                 stroka.append('Вариант '+str(i+1))
-                for j in range (int(numberOfTasks)):
+                for k in range (int(numberOfTasks)):
                     y = templates(check)
-                    stroka.append('Задача номер '+str(j+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
+                    stroka.append('Задача номер '+str(k+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
                     # print (stroka)
 
 
     else:
         numberOfTemplates = NameForm()
         form2 = AnotherForm(request.POST)
+        numberOfTemplatesUser = 0
+        numberOfTasks = 0
 
 
     return render(request, 'mysite/temp_make.html',{
-     'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka, 'form2' : form2, 'check': check, 'test' : test, 'form3': form3})
+     'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka,  'check': check, 'test' : test, 'form3': form3})
 
 
 

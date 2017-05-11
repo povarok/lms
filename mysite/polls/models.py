@@ -32,7 +32,8 @@ class Primer (models.Model):
     znak = models.CharField(max_length=200)
 
 class NameForm(forms.Form):
-    your_name = forms.CharField(label='', max_length=100, required=True)
+    your_name = forms.CharField(label='кол-во вариантов', max_length=100, required=True)
+    fieldn = forms.CharField(label='кол-во заданий в варианте', max_length=100, required=True)
 class AnotherForm(forms.Form):
     field = forms.CharField(label='', max_length=100, required=False)
     # ModelMultipleChoiceField(**kwargs)
