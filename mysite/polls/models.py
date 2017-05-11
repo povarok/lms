@@ -32,8 +32,12 @@ class Primer (models.Model):
     znak = models.CharField(max_length=200)
 
 class NameForm(forms.Form):
-    your_name = forms.CharField(label='', max_length=100)
-    pole = forms.CharField(label='', max_length=100)
+    your_name = forms.CharField(label='', max_length=100, required=True)
+class AnotherForm(forms.Form):
+    field = forms.CharField(label='', max_length=100, required=False)
+    # ModelMultipleChoiceField(**kwargs)
+
+
 
 
 
@@ -55,6 +59,9 @@ class ExcersiseTemplate(models.Model):
     def __str__(self):
         return self.name
 
+class ChoiseForm(forms.Form):
+    field = forms.ModelChoiceField(queryset=ExcersiseTemplate.objects.all(), empty_label="Случайная задача", required=False)
+
 class Replacers(models.Model):
     type = models.CharField (max_length=200)
     value = models.CharField (max_length=200)
@@ -62,8 +69,11 @@ class Replacers(models.Model):
         return self.type
 
 # перенесена функция получения сгенерированного варианта из отдельных страниц во views, чтобы не прописывать для каждой страницы
-def templates():
-        template = ExcersiseTemplate.objects.order_by('?').first()
+def templates(filter):
+        if filter != '':
+            template = ExcersiseTemplate.objects.filter(name=filter).order_by('?').first()
+        else:
+            template = ExcersiseTemplate.objects.order_by('?').first()
         subs = template.get_subs()
         answer = template.get_answer ()
         temp_text=template.text

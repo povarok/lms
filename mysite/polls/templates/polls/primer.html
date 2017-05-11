@@ -8,6 +8,12 @@
     {{answerCheck}} (<== вот сюда прилепить картинку галочка/крестик)
 
 </form>
+<form action="primer" method="post">
+{% csrf_token %}
+    введите поле Name {{ form2 }}
+    <input type="submit" value="Ответить" />
+    вы ввели {{check}}
+    </form>
 <a href="http://localhost:8000/home"><button type="button" class="btn btn-primary">Главная</button></a>
 
 

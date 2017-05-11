@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 from random import randint
-from polls.models import ExcersiseTemplate, Replacers, NameForm, Primer
+from polls.models import ExcersiseTemplate, Replacers, NameForm, Primer, AnotherForm
 
 
 
@@ -57,11 +57,12 @@ def primer(request):
     p = Primer (sl = str(ch),sll = str(chh),summ = str(summm),znak = '+')
     #p.save()
     summmm = 0
+    check = ''
     answerCheck = 'Вы еще не ввели ответ'
     if request.method == 'POST':
         form = NameForm(request.POST)
         form.pole = '5'
-
+        form2 = AnotherForm(request.POST)
         if form.is_valid():
             summmm = form.cleaned_data['your_name']
             print (summmm,'не из бд',p.summ)
@@ -71,16 +72,19 @@ def primer(request):
                 answerCheck = 'Правильно'
             else:
                 answerCheck = 'Неправильно'
+        if form2.is_valid():
+            check = form2.cleaned_data['field']
 
 
     else:
         form = NameForm()
+        form2 = AnotherForm()
         answerCheck = 'Вы еще не ввели ответ'
     Primer.objects.all().delete()
     p.save()
     return render(request, 'polls/primer.html', {
             'sl': p.sl,
-            'sll': p.sll,'znak' : p.znak,'form' : form, 'number' : summmm, 'answerCheck' : answerCheck})
+            'sll': p.sll,'znak' : p.znak,'form' : form, 'number' : summmm, 'answerCheck' : answerCheck, 'form2' : form2, 'check' : check})
 
 
 

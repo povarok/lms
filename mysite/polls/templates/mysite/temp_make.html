@@ -9,21 +9,29 @@
 
 </head>
 <body>
-
+    <a href=' http://127.0.0.1:8000/home'><button type="submit" class="btn btn-primary">Домой</button></a> <br>
     Введите, сколько вариантов нужно сгенерировать
 
     <form action="temp_make" method="post">
         {% csrf_token %}
-        {{ number }}
+        {{ number }}<br>
+        Введите кол-во заданий <br>
+        {{form2}} <br>
+        {{form3}}<br>
+
         <button type="submit" class="btn btn-primary">Cоздать варианты заданий</button>
     </form>
 
-    <a href=' http://127.0.0.1:8000/home'><button type="submit" class="btn btn-primary">Домой</button></a>
+
+
+
+
 
     {% for o in stroka %}
         {{o|linebreaks }}
         --------------------------------------------
     {% endfor %}
+
 
 </body>
 </html>

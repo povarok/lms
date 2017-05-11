@@ -12,7 +12,7 @@ from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm
 #from django.core.mail import send_mail
 
 
@@ -75,6 +75,7 @@ def home(request, user_id):
 
     numberOfTemplatesUser = 0
     stroka = []
+    check = ''
     # /РЕШЕНО/ как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
     #template_name = "mysite/dom.html"
     success_url = "/login"
@@ -107,7 +108,7 @@ def home(request, user_id):
     #     temp_name = template.name
     #     return temp_text, temp_answer, temp_name
 
-    x = templates()
+    x = templates(check)
     #print ('ВЫВОД TEMPLATES',x)
     #print ('ВЫВОД TEMPLATES',x[0])
 
@@ -154,8 +155,10 @@ def home(request, user_id):
 
 def temp_make(request):
     numberOfTemplatesUser = 0
+    numberOfTasks = 0
     stroka = []
-
+    check = ''
+    test = ExcersiseTemplate.objects.all()
     # def templates():
     #     template = ExcersiseTemplate.objects.order_by('?').first()
     #     subs = template.get_subs()
@@ -176,25 +179,45 @@ def temp_make(request):
     #
     #     temp_name = template.name
     #     return temp_text, temp_answer, temp_name
-
-    x = templates()
+    # form3 = ChoiseForm()
+    # print ('form3', form3)
+    x = templates(check)
 
     if request.method == 'POST':
         numberOfTemplates = NameForm(request.POST)
         #print (numberOfTemplates)
+        form2 = AnotherForm(request.POST)
+        form3 = ChoiseForm(request.POST)
+        if form2.is_valid():
+            numberOfTasks = form2.cleaned_data['field']
+        if form3.is_valid():
+            print ('check1',check)
+            check = form3.cleaned_data['field']
+            if check == None:
+                check = ''
+            print ('check2',check)
 
         if numberOfTemplates.is_valid():
             numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
+            print ('ВАСЯ', numberOfTemplatesUser)
+            if numberOfTemplatesUser == None:
+                numberOfTemplatesUser = 0
             stroka = []
             for i in range(int(numberOfTemplatesUser)):
-                y = templates()
-                stroka.append('Вариант '+str(i+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
-                # print (stroka)
+                stroka.append('Вариант '+str(i+1))
+                for j in range (int(numberOfTasks)):
+                    y = templates(check)
+                    stroka.append('Задача номер '+str(j+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
+                    # print (stroka)
+
+
     else:
         numberOfTemplates = NameForm()
+        form2 = AnotherForm(request.POST)
+
 
     return render(request, 'mysite/temp_make.html',{
-     'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
+     'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka, 'form2' : form2, 'check': check, 'test' : test, 'form3': form3})
 
 
 
