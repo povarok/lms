@@ -50,21 +50,21 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 def primer(request):
-    # for i in range (1,10):
+
     ch = (randint(1,10))
     chh = (randint(1,10))
     summm = ch+chh
     p = Primer (sl = str(ch),sll = str(chh),summ = str(summm),znak = '+')
-    #p.save()
+
     summmm = 0
     check = ''
     answerCheck = 'Вы еще не ввели ответ'
     if request.method == 'POST':
-        form = NameForm(request.POST)
-        form.pole = '5'
-        form2 = AnotherForm(request.POST)
+        form = AnotherForm(request.POST)
+
+
         if form.is_valid():
-            summmm = form.cleaned_data['your_name']
+            summmm = form.cleaned_data['field']
             print (summmm,'не из бд',p.summ)
             summa = Primer.objects.last()
             print ('из БД',summa.summ)
@@ -72,19 +72,18 @@ def primer(request):
                 answerCheck = 'Правильно'
             else:
                 answerCheck = 'Неправильно'
-        if form2.is_valid():
-            check = form2.cleaned_data['field']
+
 
 
     else:
-        form = NameForm()
-        form2 = AnotherForm()
+        form = AnotherForm()
+
         answerCheck = 'Вы еще не ввели ответ'
     Primer.objects.all().delete()
     p.save()
     return render(request, 'polls/primer.html', {
             'sl': p.sl,
-            'sll': p.sll,'znak' : p.znak,'form' : form, 'number' : summmm, 'answerCheck' : answerCheck, 'form2' : form2, 'check' : check})
+            'sll': p.sll,'znak' : p.znak,'form' : form, 'number' : summmm, 'answerCheck' : answerCheck,  'check' : check})
 
 
 
