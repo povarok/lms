@@ -1,0 +1,61 @@
+
+#text_sleva{
+	font:Arial;
+	font-size:22;
+	color:white;
+	margin-bottom: 10px;
+	margin-top: 50px;
+	margin-left:20px;
+	margin-right:20px
+}
+h2{
+	font:Arial;
+	font-size:10;
+	color:red;
+	margin-bottom: 0px;
+	margin-top: 0px;
+}
+h1 {
+    margin-top:150px;
+	font-size:42;
+	color:3d69ba;
+}
+h3{
+	font-size: 240%;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	color: red;
+}
+h4{
+	font-size: 240%;
+	color: blue;
+	margin-top: 7px;
+	margin-bottom: 7px;
+}
+#gs {
+	position: absolute;
+    width: 600px;
+	height: 370px;
+	margin-top: 25px;
+    margin-left: 675px;
+	-webkit-border-radius: 10px;
+    -ms-border-radius: 10px;
+    border-radius: 10px;
+    background-image: url(images/fonbloka.png);
+}
+
+#buttons {
+	position: absolute;
+	margin-top: 180px;
+	margin-left: 42%;
+}
+#buttons2 {
+	position: absolute;
+	margin-top: 80px;
+    margin-left: 7%;
+}
+#buttons3 {
+	position: absolute;
+	margin-top: 415px;
+    margin-left: 580px;
+}
