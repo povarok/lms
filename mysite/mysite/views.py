@@ -12,7 +12,8 @@ from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm
+
 #from django.core.mail import send_mail
 
 
@@ -72,6 +73,16 @@ def home(request, user_id):
     if request.user.id != int(user_id):
         #raise HTTP404
         raise Http404("Вы заходите не на свою страницу пользователя / не авторизованы")
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
+    print (teacher_check)
+
+    # userGroup = request.user.groups.all()
+    # print (userGroup)
+    # print (request.user.groups.all()[0])
+
+    #ExcersiseTemplate.objects.create(text = 'test',name = 'test',correctAnswer = 'test',type = 'test',grade = 1,subject = 'test')
+
+
 
     numberOfTemplatesUser = 0
     stroka = []
@@ -149,9 +160,24 @@ def home(request, user_id):
     
     
     
-     
-    return render(request, 'mysite/dom.html',{
+
+    return render(request, 'mysite/dom.html',{'teacher_check' : teacher_check ,'groups': request.user.groups.all(),
             'text': x[0],'answer' : x[1], 'name' : x[2], 'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
+
+
+def temp_save(request):
+    if request.user.groups.filter(name='Учитель').exists():
+        if request.method == 'POST':
+            form = TemplateForm(request.POST)
+            if form.is_valid():
+                form.save()
+        else:
+            form = TemplateForm()
+
+        return render(request, 'mysite/temp_save.html',{'templateForm' : form})
+    else:
+        raise Http404("Вы не учитель")
+
 
 def temp_make(request):
     numberOfTemplatesUser = 0

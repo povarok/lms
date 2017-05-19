@@ -4,6 +4,7 @@ import datetime
 from django.utils import timezone
 from django import forms
 import re
+from django.forms import ModelForm
 from django.http import HttpResponseRedirect, Http404
 
 
@@ -59,6 +60,11 @@ class ExcersiseTemplate(models.Model):
 
     def __str__(self):
         return self.name
+
+class TemplateForm(ModelForm):
+    class Meta:
+        model = ExcersiseTemplate
+        fields = ['text', 'name', 'correctAnswer', 'type', 'grade', 'subject']
 
 class ChoiseForm(forms.Form):
     field = forms.ModelChoiceField(queryset=ExcersiseTemplate.objects.all(), empty_label="Случайная задача", required=False)

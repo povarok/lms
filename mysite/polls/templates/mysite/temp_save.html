@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Сохранить шаблон</title>
+
+</head>
+<body>
+    <form action="temp_save" method="post">
+        {% csrf_token %}
+        {{ templateForm }}
+        <input type="submit" value="Сохранить" />
+    </form>
+</body>
+</html>

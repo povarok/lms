@@ -32,11 +32,15 @@
     </td></table>
 
 
+
+
     <!--<form action="home" method="post">-->
         <!--{% csrf_token %}-->
         <!--{{ number }}-->
         <!--<input type="submit" value="Submit" />-->
     <!--</form>-->
+
+
 
     {% for o in stroka %}
         {{o|linebreaks }}
@@ -44,6 +48,10 @@
     {% endfor %}
 
 
+    {% if teacher_check %}
+        <a href="http://localhost:8000/temp_save"><button type="button" class="btn btn-primary">Создать свой шаблон</button></a>
+
+    {% endif %}
 
 
 
