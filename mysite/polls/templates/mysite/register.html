@@ -1,11 +1,11 @@
-<html>
- <head>
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Register</title>
- </head>
- <body>
+{% extends "mysite/base.html" %}
+{% block enter %}
+class="active"
+{% endblock %}
+{% block title %}Регистрация{% endblock %}
+{% block name %}Регистрация{% endblock %}
+{% block content %}
+
    <p class="text-center">
     <form action="" method="post">
       {% csrf_token %}
@@ -15,6 +15,5 @@
     
     </form>
    </p>
- </body>
-</html>
+{% endblock %}
 

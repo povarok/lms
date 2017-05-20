@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html>
- <head>
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>LMS</title>
- </head>
- <body>
+{% extends "mysite/base.html" %}
+
+{% block title %}LMS{% endblock %}
+{% block name %}ЛМС{% endblock %}
+{% block content %}
     <p>Это ЛМС</p>
     <p><a href="http://localhost:8000/home/" align="center"><button><h4>Понял.</button></a></p>
- </body>
-</html>
+
+{% endblock %}

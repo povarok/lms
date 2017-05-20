@@ -1,13 +1,10 @@
-{% load staticfiles %}
-<html>
-    <head>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="{% static 'dom.css' %}">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>Login</title>
-    </head>
-    <body>
+{% extends "mysite/base.html" %}
+{% block enter %}
+class="active"
+{% endblock %}
+{% block title %}Логин{% endblock %}
+{% block name %}Вход в систему{% endblock %}
+{% block content %}
         <br>
             <form action="" method="post">
             {% csrf_token %}
@@ -16,5 +13,24 @@
             <button type="submit" class="btn btn-primary">Войти</button>
             <a href="http://localhost:8000/register/"><button type="button" class="btn btn-primary">Регистрация</button></a>
             </form>
-    </body>
-</html>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-offset-5 col-md-3">
+                    <div class="form-login">
+                    <h4>Welcome back.</h4>
+                    <input type="text" id="userName" class="form-control input-sm chat-input" placeholder="username" />
+                    </br>
+                    <input type="text" id="userPassword" class="form-control input-sm chat-input" placeholder="password" />
+                    </br>
+                    <div class="wrapper">
+                    <span class="group-btn">
+                        <button type="submit" class="btn btn-primary">login <i class="fa fa-sign-in"></i></button>
+                    </span>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+{% endblock %}

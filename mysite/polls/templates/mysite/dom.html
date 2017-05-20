@@ -1,29 +1,18 @@
-{% load staticfiles %}
-<html>
- <head>
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link rel="stylesheet" href="{% static 'dom.css' %}">
-  <title>Главная</title>
- </head>   
- <body>
+{% extends "mysite/base.html" %}
+{% block home %}
+class="active"
+{% endblock %}
+{% block name %}Главная страница{% endblock %}
+{% block content %}
 
-    <p><h1 align="center" >Главная страница</h1></p>
 
     <p><font >
-            <p class="text-center">Welcome, {{ user.username }}. Thanks for logging in.
-        <div id="buttons">
-        <a href="http://127.0.0.1:8000/temp_make"><button type="submit" class="btn btn-primary">Cоздать варианты заданий</button></a>
-		<a href="http://localhost:8000/logout/"><button type="button" class="btn btn-primary">Выход</button></a></form>
-        </div>
+
 	<p class="text-center">Здесь будет текст стартовой страницы, но пока его нет</p>
     <br>
     <p class="text-center">Пример созданного задания:</p>
 
     <!--<p>user.id : {{user.id}}</p>-->
-
-    <a href="http://localhost:8000/polls/primer"><button type="button" class="btn btn-primary">polls/primer</button></a>
 
     <table border="2" align="center"> <td>
     <p>Задача: {{name}}</p>
@@ -48,12 +37,5 @@
     {% endfor %}
 
 
-    {% if teacher_check %}
-        <a href="http://localhost:8000/temp_save"><button type="button" class="btn btn-primary">Создать свой шаблон</button></a>
 
-    {% endif %}
-
-
-
-
- </body>
+{% endblock %}

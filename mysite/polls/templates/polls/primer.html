@@ -1,17 +1,24 @@
-
+{% extends "mysite/base.html" %}
+{% block train %}
+class="active"
+{% endblock %}
+{% block name %}Тренажёр{% endblock %}
+{% block content %}
 
 <form action="primer" method="post">
     {{sl}} {{znak}} {{sll}} =
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Ответить" />
-    {{answerCheck}} (<== вот сюда прилепить картинку галочка/крестик)
+    {%if answerCheck %}
+        <font color="green" size="5"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
+    {% else %}
+        <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>
+    {% endif %}
 
 </form>
 
-<a href="http://localhost:8000/home"><button type="button" class="btn btn-primary">Главная</button></a>
-
-
+{% endblock %}
 
 
 

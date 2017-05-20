@@ -1,15 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Сохранить шаблон</title>
+{% extends "mysite/base.html" %}
+{% block temp_save %}
+class="active"
+{% endblock %}
+{% block title %}Сохранить шаблон{% endblock %}
+{% block name %}Создание новой задачи{% endblock %}
+{% block content %}
 
-</head>
-<body>
     <form action="temp_save" method="post">
         {% csrf_token %}
         {{ templateForm }}
         <input type="submit" value="Сохранить" />
     </form>
-</body>
-</html>
+{% endblock %}

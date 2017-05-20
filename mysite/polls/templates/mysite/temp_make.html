@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-    <title>Создание шаблонов по вариантам</title>
+{% extends "mysite/base.html" %}
+{% block temp_make %}
+class="active"
+{% endblock %}
+{% block title %}Создание шаблонов по вариантам{% endblock %}
+{% block name %}Создание варианта{% endblock %}
+{% block content %}
 
-
-</head>
-<body>
-    <a href=' http://127.0.0.1:8000/home'><button type="submit" class="btn btn-primary">Домой</button></a> <br>
 
 
     <form action="temp_make" method="post">
@@ -17,8 +13,9 @@
         {{ number }}<br>
 
 
-        {{form3}}<br>
-
+        {{form3}}
+        <br>
+        <br>
         <button type="submit" class="btn btn-primary">Cоздать варианты заданий</button>
     </form>
 
@@ -32,6 +29,4 @@
         --------------------------------------------
     {% endfor %}
 
-
-</body>
-</html>
+{% endblock %}

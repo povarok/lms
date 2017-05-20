@@ -33,8 +33,8 @@ class Primer (models.Model):
     znak = models.CharField(max_length=200)
 
 class NameForm(forms.Form):
-    your_name = forms.CharField(label='кол-во вариантов', max_length=100, required=True)
-    fieldn = forms.CharField(label='кол-во заданий в варианте', max_length=100, required=True)
+    your_name = forms.CharField(label='Кол-во вариантов', max_length=100, required=True)
+    fieldn = forms.CharField(label='Кол-во заданий в варианте', max_length=100, required=True)
 class AnotherForm(forms.Form):
     field = forms.CharField(label='', max_length=100, required=False)
     # ModelMultipleChoiceField(**kwargs)
@@ -45,7 +45,7 @@ class AnotherForm(forms.Form):
 
 
 class ExcersiseTemplate(models.Model):
-    text = models.TextField (max_length=1000)
+    text = models.TextField ( max_length=1000)
     name = models.CharField (max_length=200)
     correctAnswer = models.CharField (max_length=200)
     type = models.CharField (max_length=200)
@@ -65,7 +65,6 @@ class TemplateForm(ModelForm):
     class Meta:
         model = ExcersiseTemplate
         fields = ['text', 'name', 'correctAnswer', 'type', 'grade', 'subject']
-
 class ChoiseForm(forms.Form):
     field = forms.ModelChoiceField(queryset=ExcersiseTemplate.objects.all(), empty_label="Случайная задача", required=False)
 

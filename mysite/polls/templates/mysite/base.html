@@ -1,0 +1,46 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" href="{% static 'home.css' %}">
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="raw">
+                <div class="col-lg-2">
+                    <div id="lms-logo">
+                        <p><img src="http://cdn1.savepice.ru/uploads/2017/5/20/7c9fb0f191a16b286453dd7db53126ba-full.png" class="img-responsive" alt="тут должно быть лого"></p>
+                    </div>
+
+                    <br>
+                    <div id="text-navbar"><p class="text-center">Вы вошли как {{ user.username }}.</p></div>
+                    <ul class="nav nav-pills nav-stacked">
+                        <li {% block home %}{% endblock %} type="submit">
+                            <a href=' http://127.0.0.1:8000/home'>Главная страница</a>
+                        <li {% block temp_make %}{% endblock %} type="submit">
+                            <a href="http://127.0.0.1:8000/temp_make"> Cоздать варианты заданий</a></li>
+                        <li {% block temp_save %}{% endblock %} type="button">
+                            {% if teacher_check %}
+                            <a href="http://localhost:8000/temp_save"><font color="white">Создать свой шаблон</font></a>
+                            {% endif %}</li>
+                        <li {% block train %}{% endblock %} type="button">
+                            <a href="http://localhost:8000/polls/primer">Тренажёр</a></li>
+                        <li {% block exit %}{% endblock %} type="button">
+                            <a href="http://localhost:8000/logout/"><i class="icon-search icon-off"> </i> Выход</a></li>
+                    </ul>
+
+                </div>
+                <div class="col-lg-8">
+                    <p><h1 align="center" >{% block name %}{% endblock %}</h1></p>
+                    <br>
+                    <br>
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

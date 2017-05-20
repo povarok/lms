@@ -69,9 +69,9 @@ def primer(request):
             summa = Primer.objects.last()
             print ('из БД',summa.summ)
             if int(summmm) == int(summa.summ):
-                answerCheck = 'Правильно'
+                answerCheck = True
             else:
-                answerCheck = 'Неправильно'
+                answerCheck = False
 
 
 
