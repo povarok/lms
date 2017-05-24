@@ -22,13 +22,13 @@
                             <a href=' http://127.0.0.1:8000/home'>Главная страница</a>
                         <li {% block temp_make %}{% endblock %} type="submit">
                             <a href="http://127.0.0.1:8000/temp_make"> Cоздать варианты заданий</a></li>
-                        <li {% block temp_save %}{% endblock %} type="button">
+                        <li {% block temp_save %}{% endblock %} type="submit">
                             {% if teacher_check %}
                             <a href="http://localhost:8000/temp_save"><font color="white">Создать свой шаблон</font></a>
                             {% endif %}</li>
-                        <li {% block train %}{% endblock %} type="button">
+                        <li {% block train %}{% endblock %} type="submit">
                             <a href="http://localhost:8000/polls/primer">Тренажёр</a></li>
-                        <li {% block exit %}{% endblock %} type="button">
+                        <li type="button">
                             <a href="http://localhost:8000/logout/"><i class="icon-search icon-off"> </i> Выход</a></li>
                     </ul>
 
