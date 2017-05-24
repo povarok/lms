@@ -1,0 +1,19 @@
+body{
+background-color:#216894;
+}
+.col-lg-2{
+    margin-top:3%;
+    height:90%;
+}
+#text-navbar{
+    color:white;
+}
+#lms-logo{
+    margin-right: 5%;
+}
+.col-lg-8{
+    box-sizing: border-box;
+    padding-top: 8%;
+    background-color: white;
+    height:100%;
+}
