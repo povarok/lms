@@ -162,7 +162,7 @@ def home(request, user_id):
     
 
     return render(request, 'mysite/dom.html',{'teacher_check' : teacher_check ,'groups': request.user.groups.all(),
-            'text': x[0],'answer' : x[1], 'name' : x[2], 'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
+             'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
 
 
 def temp_save(request):
