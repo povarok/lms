@@ -39,7 +39,10 @@ class AnotherForm(forms.Form):
     field = forms.CharField(label='', max_length=100, required=False)
     # ModelMultipleChoiceField(**kwargs)
 
-
+class SavedPrimer(models.Model):
+    user = models.CharField(max_length=200)
+    idNumber = models.CharField(max_length=200)
+    value = models.CharField(max_length=200)
 
 
 

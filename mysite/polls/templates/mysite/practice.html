@@ -1,0 +1,24 @@
+{% extends "mysite/base.html" %}
+{% block temp_save %}
+class="active"
+{% endblock %}
+{% block title %}Сохранить шаблон{% endblock %}
+{% block name %}Практика{% endblock %}
+{% block content %}
+
+    <form action="practice" method="post">
+        {{temp_text}}
+
+        {% csrf_token %}
+        {{ form }}
+    <input type="submit" value="Ответить" />
+    {%if answerCheck %}
+        <font color="green" size="4"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
+    {% else %}
+        <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>
+    {% endif %}
+    <br>
+        Ответ: {{answer}}
+
+</form>
+{% endblock %}

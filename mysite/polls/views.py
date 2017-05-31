@@ -55,7 +55,7 @@ def primer(request):
     chh = (randint(1,10))
     summm = ch+chh
     p = Primer (sl = str(ch),sll = str(chh),summ = str(summm),znak = '+')
-
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
     summmm = 0
     check = ''
     answerCheck = 'Вы еще не ввели ответ'
@@ -81,7 +81,7 @@ def primer(request):
         answerCheck = 'Вы еще не ввели ответ'
     Primer.objects.all().delete()
     p.save()
-    return render(request, 'polls/primer.html', {
+    return render(request, 'polls/primer.html', {'teacher_check' : teacher_check,
             'sl': p.sl,
             'sll': p.sll,'znak' : p.znak,'form' : form, 'number' : summmm, 'answerCheck' : answerCheck,  'check' : check})
 

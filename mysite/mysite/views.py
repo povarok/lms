@@ -12,8 +12,8 @@ from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm
-
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer
+import random
 #from django.core.mail import send_mail
 
 
@@ -67,14 +67,45 @@ class LoginFormView(FormView):
 #     id = request.user.id
 #     return (id)
 
+def practice(request):
+    check = ''
+    x = templates(check)
+    print (x[1])
+    idNumber = 3
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
+    l = SavedPrimer(user = request.user.id, idNumber = idNumber, value = x[1] )
 
+    if request.method == 'POST':
+        form = AnotherForm(request.POST)
+
+
+        if form.is_valid():
+            form = form.cleaned_data['field']
+
+
+           # summa = SavedPrimer.objects.last()
+
+            if (str(SavedPrimer.objects.filter(user=request.user.id,idNumber=idNumber ).first().value) == str(form)):
+                answerCheck = True
+                print ('БД: ',SavedPrimer.objects.filter(user=request.user.id,idNumber=idNumber ).first().value,'введенное', form)
+            else:
+                answerCheck = False
+                print ('БД: ',SavedPrimer.objects.filter(user=request.user.id,idNumber=idNumber ).first().value,'введенное', form)
+    else:
+        form = AnotherForm()
+        answerCheck = 'Вы еще не ввели ответ'
+
+    form = AnotherForm()
+    SavedPrimer.objects.filter(user=request.user.id).all().delete()
+    l.save()
+    return render(request, 'mysite/practice.html',{'teacher_check' : teacher_check, 'answerCheck' : answerCheck, 'temp_text' : x[0], 'form' : form, 'answer': x[1]})
 
 def home(request, user_id):
     if request.user.id != int(user_id):
-        #raise HTTP404
         raise Http404("Вы заходите не на свою страницу пользователя / не авторизованы")
     teacher_check = request.user.groups.filter(name='Учитель').exists()
     print (teacher_check)
+
 
     # userGroup = request.user.groups.all()
     # print (userGroup)
@@ -120,13 +151,9 @@ def home(request, user_id):
     #     return temp_text, temp_answer, temp_name
 
     x = templates(check)
-    #print ('ВЫВОД TEMPLATES',x)
-    #print ('ВЫВОД TEMPLATES',x[0])
-
 
     if request.method == 'POST':
         numberOfTemplates = NameForm(request.POST)
-
         if numberOfTemplates.is_valid():
             numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
             stroka = []
@@ -134,11 +161,6 @@ def home(request, user_id):
                 y = templates()
                 stroka.append('Название задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
                 print (stroka)
-
-                #print ('пишу  ',i)
-
-
-
     else:
         numberOfTemplates = NameForm()
 
@@ -162,10 +184,11 @@ def home(request, user_id):
     
 
     return render(request, 'mysite/dom.html',{'teacher_check' : teacher_check ,'groups': request.user.groups.all(),
-             'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
+            'text': x[0],'answer' : x[1], 'name' : x[2], 'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
 
 
 def temp_save(request):
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
     if request.user.groups.filter(name='Учитель').exists():
         if request.method == 'POST':
             form = TemplateForm(request.POST)
@@ -174,7 +197,7 @@ def temp_save(request):
         else:
             form = TemplateForm()
 
-        return render(request, 'mysite/temp_save.html',{'templateForm' : form})
+        return render(request, 'mysite/temp_save.html',{'templateForm' : form, 'teacher_check' : teacher_check})
     else:
         raise Http404("Вы не учитель")
 
@@ -187,7 +210,7 @@ def temp_make(request):
     test = ExcersiseTemplate.objects.all()
     print (numberOfTasks)
     form3 = ChoiseForm(request.POST)
-
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
     if request.method == 'POST':
         numberOfTemplates = NameForm(request.POST)
         #print (numberOfTemplates)
@@ -227,7 +250,7 @@ def temp_make(request):
         numberOfTasks = 0
 
 
-    return render(request, 'mysite/temp_make.html',{
+    return render(request, 'mysite/temp_make.html',{'teacher_check':teacher_check,
      'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka,  'check': check, 'test' : test, 'form3': form3})
 
 
@@ -251,7 +274,8 @@ def home1 (request):
     return HttpResponseRedirect(idHome)
 
 def lms (request):
-    return render(request, 'mysite/lms.html')
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
+    return render(request, 'mysite/lms.html',{'teacher_check' : teacher_check})
 
 # def mail(request):
 #     send_mail('Subject here', 'Here is the message.', 'vasily.komarov1997@gmail.com',
