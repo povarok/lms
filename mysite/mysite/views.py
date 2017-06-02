@@ -271,16 +271,23 @@ def temp_make(request):
                 for k in range (int(numberOfTasks)):
                     y = templates(check)
 
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача номер'+str(k+1)+'</font>',styles["Normal"] ))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача номер '+str(k+1)+'</font>',styles["Normal"] ))
+                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
 
                     PDFstroka.append(Paragraph('<font name="FreeSans">Название задачи:</font>',styles["Normal"]))
                     PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[2])+ '</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
 
                     PDFstroka.append(Paragraph('<font name="FreeSans">Задача:</font>',styles["Normal"]))
                     PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[0])+'</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
 
                     PDFstroka.append(Paragraph('<font name="FreeSans">Ответ:</font>',styles["Normal"]))
                     PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[1])+'</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
+
+                    PDFstroka.append(Paragraph('<font name="FreeSans">_________________________________________________________________</font>',styles["Normal"] ))
+                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
 
 
                     stroka.append('Задача номер '+str(k+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
