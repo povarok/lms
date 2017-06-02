@@ -150,7 +150,7 @@ def templates(filter):
 def makeNicePdf(request, text):
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="exercise.pdf"'
 
     # Create the PDF object, using the response object as its "file."
     p = SimpleDocTemplate(response,pagesize = A4,title='Тест документа',author='CAV Inc')
@@ -160,11 +160,8 @@ def makeNicePdf(request, text):
 
     p.build(text)
 
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
 
 
-    # Close the PDF object cleanly, and we're done.
 
     print ('вывел пдф')
     return response

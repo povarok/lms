@@ -262,17 +262,26 @@ def temp_make(request):
             PDFstroka = []
             stroka = []
             styles = getSampleStyleSheet()
+            print (styles)
             pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
             for i in range(int(numberOfTemplatesUser)):
                 stroka.append('Вариант '+str(i+1))
-                PDFstroka.append(Paragraph('<font name="FreeSans">Вариант '+str(i+1)+'</font>',styles["Normal"]))
+                PDFstroka.append(Paragraph('<font name="FreeSans">Вариант '+str(i+1)+'</font>',styles["title"]))
+
                 for k in range (int(numberOfTasks)):
                     y = templates(check)
 
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача номер '+str(k+1)+'</font>',styles["Normal"] ))
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Название задачи:'  + str(y[2])+ '</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача:'  + str(y[0])+'</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Ответ:' +str(y[1])+'</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача номер'+str(k+1)+'</font>',styles["Normal"] ))
+
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Название задачи:</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[2])+ '</font>',styles["Normal"]))
+
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача:</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[0])+'</font>',styles["Normal"]))
+
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Ответ:</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[1])+'</font>',styles["Normal"]))
+
 
                     stroka.append('Задача номер '+str(k+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
                     # print (stroka)
