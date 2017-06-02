@@ -1,23 +1,31 @@
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
-# Опять же, спасибо django за готовую форму аутентификации.
 from django.contrib.auth.forms import AuthenticationForm
-
-# Функция для установки сессионного ключа.
-# По нему django будет определять, выполнил ли вход пользователь.
 from django.contrib.auth import login, logout
-
 from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer, makePdf
+from django.http import HttpResponse
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
+
+
+
+from reportlab.platypus import Paragraph,SimpleDocTemplate
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+import reportlab.rl_config
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+
+
 import random
 from reportlab.pdfgen import canvas
 #from django.core.mail import send_mail
 
-from django.http import HttpResponse
+
 
 # def hello_pdf(request):
 #     # Create the HttpResponse object with the appropriate PDF headers.
@@ -113,7 +121,8 @@ def practice(request):
 
     form = AnotherForm()
     SavedPrimer.objects.filter(user=request.user.id).all().delete()
-    l.save()
+    if request.user.id!=None:
+        l.save()
     return render(request, 'mysite/practice.html',{'teacher_check' : teacher_check, 'answerCheck' : answerCheck, 'temp_text' : x[0], 'form' : form, 'answer': x[1]})
 
 def home(request, user_id):
@@ -121,7 +130,7 @@ def home(request, user_id):
         raise Http404("Вы заходите не на свою страницу пользователя / не авторизованы")
     teacher_check = request.user.groups.filter(name='Учитель').exists()
     print (teacher_check)
-
+    # i  = request.user.
 
     # userGroup = request.user.groups.all()
     # print (userGroup)
@@ -252,14 +261,22 @@ def temp_make(request):
                 numberOfTemplatesUser = 0
             PDFstroka = []
             stroka = []
+            styles = getSampleStyleSheet()
+            pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
             for i in range(int(numberOfTemplatesUser)):
                 stroka.append('Вариант '+str(i+1))
+                PDFstroka.append(Paragraph('<font name="FreeSans">Вариант '+str(i+1)+'</font>',styles["Normal"]))
                 for k in range (int(numberOfTasks)):
                     y = templates(check)
-                    PDFstroka.append('Задача номер '+str(k+1)+'Название задачи:' + str(y[2])+ 'Задача:' + str(y[0]) + 'Ответ:'+str(y[1]))
+
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача номер '+str(k+1)+'</font>',styles["Normal"] ))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Название задачи:'  + str(y[2])+ '</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача:'  + str(y[0])+'</font>',styles["Normal"]))
+                    PDFstroka.append(Paragraph('<font name="FreeSans">Ответ:' +str(y[1])+'</font>',styles["Normal"]))
+
                     stroka.append('Задача номер '+str(k+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
                     # print (stroka)
-            return makePdf(request,PDFstroka)
+            return makeNicePdf(request,PDFstroka)
 
 
     else:

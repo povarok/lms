@@ -1,10 +1,20 @@
-#!/usr/bin/python
+# !/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+
+
+from reportlab.platypus import Paragraph,SimpleDocTemplate
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+import reportlab.rl_config
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -114,22 +124,47 @@ def templates(filter):
         temp_name = template.name
         return temp_text, temp_answer, temp_name
 
-def makePdf(request, text):
+# def makePdf(request, text):
+#     # Create the HttpResponse object with the appropriate PDF headers.
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+#
+#     # Create the PDF object, using the response object as its "file."
+#     p = canvas.Canvas(response, pagesize=letter)
+#     width, height = letter
+#
+#     pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+#     p.setFont('FreeSans', 12)
+#     # Draw things on the PDF. Here's where the PDF generation happens.
+#     # See the ReportLab documentation for the full list of functionality.
+#     for i in range(0,len(text)):
+#         p.drawString(0, 600-100*i, str(text[i]))
+#
+#     # Close the PDF object cleanly, and we're done.
+#     p.showPage()
+#     p.save()
+#     print ('вывел пдф')
+#     return response
+
+
+def makeNicePdf(request, text):
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
 
     # Create the PDF object, using the response object as its "file."
-    p = canvas.Canvas(response, pagesize=A4)
+    p = SimpleDocTemplate(response,pagesize = A4,title='Тест документа',author='CAV Inc')
+    width, height = letter
+
     pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
-    p.setFont('FreeSans', 12)
+
+    p.build(text)
+
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
-    for i in range(0,len(text)):
-        p.drawString(0, 900-100*i, str(text[i]))
+
 
     # Close the PDF object cleanly, and we're done.
-    p.showPage()
-    p.save()
+
     print ('вывел пдф')
     return response

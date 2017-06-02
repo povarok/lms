@@ -29,7 +29,9 @@
                         <li {% block train %}{% endblock %} type="submit">
                             <a href="/polls/primer">Тренажёр</a></li>
                         <li {% block practice %}{% endblock %} type="submit">
+                            {% if user.is_authenticated %}
                             <a href='/practice'>Практика</a>
+                            {% endif %}
                         <li type="button">
                             <a href="/logout/"><i class="icon-search icon-off"> </i> Выход</a></li>
 
