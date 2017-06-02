@@ -12,13 +12,29 @@ from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render, get_object_or_404
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer, makePdf
 import random
+from reportlab.pdfgen import canvas
 #from django.core.mail import send_mail
 
+from django.http import HttpResponse
 
-
-
+# def hello_pdf(request):
+#     # Create the HttpResponse object with the appropriate PDF headers.
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+#
+#     # Create the PDF object, using the response object as its "file."
+#     p = canvas.Canvas(response)
+#
+#     # Draw things on the PDF. Here's where the PDF generation happens.
+#     # See the ReportLab documentation for the full list of functionality.
+#     p.drawString(100, 100, "Hello world.")
+#
+#     # Close the PDF object cleanly, and we're done.
+#     p.showPage()
+#     p.save()
+#     return response
 
 class RegisterFormView(FormView):
     form_class = UserCreationForm
@@ -234,13 +250,16 @@ def temp_make(request):
             # print ('sd', numberOfTemplatesUser)
             if numberOfTemplatesUser == None:
                 numberOfTemplatesUser = 0
+            PDFstroka = []
             stroka = []
             for i in range(int(numberOfTemplatesUser)):
                 stroka.append('Вариант '+str(i+1))
                 for k in range (int(numberOfTasks)):
                     y = templates(check)
+                    PDFstroka.append('Задача номер '+str(k+1)+'Название задачи:' + str(y[2])+ 'Задача:' + str(y[0]) + 'Ответ:'+str(y[1]))
                     stroka.append('Задача номер '+str(k+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
                     # print (stroka)
+            return makePdf(request,PDFstroka)
 
 
     else:

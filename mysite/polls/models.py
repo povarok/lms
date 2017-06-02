@@ -1,3 +1,11 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 import datetime
@@ -5,7 +13,11 @@ from django.utils import timezone
 from django import forms
 import re
 from django.forms import ModelForm
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
+from reportlab.pdfgen import canvas
+
+
+
 
 
 # Create your models here.
@@ -36,7 +48,7 @@ class NameForm(forms.Form):
     your_name = forms.CharField(label='Кол-во вариантов', max_length=100, required=True)
     fieldn = forms.CharField(label='Кол-во заданий в варианте', max_length=100, required=True)
 class AnotherForm(forms.Form):
-    field = forms.CharField(label='', max_length=100, required=False)
+    field = forms.CharField(label='Не целые числа - через точку,к целым дописывается ".0"', max_length=100, required=False)
     # ModelMultipleChoiceField(**kwargs)
 
 class SavedPrimer(models.Model):
@@ -102,3 +114,22 @@ def templates(filter):
         temp_name = template.name
         return temp_text, temp_answer, temp_name
 
+def makePdf(request, text):
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    p = canvas.Canvas(response, pagesize=A4)
+    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+    p.setFont('FreeSans', 12)
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    for i in range(0,len(text)):
+        p.drawString(0, 900-100*i, str(text[i]))
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+    print ('вывел пдф')
+    return response

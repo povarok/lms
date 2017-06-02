@@ -1,5 +1,5 @@
 {% extends "mysite/base.html" %}
-{% block temp_save %}
+{% block practice %}
 class="active"
 {% endblock %}
 {% block title %}Сохранить шаблон{% endblock %}
@@ -10,6 +10,7 @@ class="active"
         {{temp_text}}
 
         {% csrf_token %}
+        <br>
         {{ form }}
     <input type="submit" value="Ответить" />
     {%if answerCheck %}
