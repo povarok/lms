@@ -1,48 +1,17 @@
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
-from django.template import RequestContext
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
-
-
-
-from reportlab.platypus import Paragraph,SimpleDocTemplate
+from django.shortcuts import render
+from reportlab.platypus import Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.pagesizes import A4
-import reportlab.rl_config
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from django.contrib.auth.decorators import login_required
 
-
-
-import random
-from reportlab.pdfgen import canvas
-#from django.core.mail import send_mail
-
-
-
-# def hello_pdf(request):
-#     # Create the HttpResponse object with the appropriate PDF headers.
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
-#
-#     # Create the PDF object, using the response object as its "file."
-#     p = canvas.Canvas(response)
-#
-#     # Draw things on the PDF. Here's where the PDF generation happens.
-#     # See the ReportLab documentation for the full list of functionality.
-#     p.drawString(100, 100, "Hello world.")
-#
-#     # Close the PDF object cleanly, and we're done.
-#     p.showPage()
-#     p.save()
-#     return response
 
 class RegisterFormView(FormView):
     form_class = UserCreationForm
@@ -61,7 +30,6 @@ class RegisterFormView(FormView):
 
         # Вызываем метод базового класса
         return super(RegisterFormView, self).form_valid(form)
-
 
 
 class LoginFormView(FormView):
@@ -87,10 +55,17 @@ class LoginFormView(FormView):
         login(self.request, self.user)
         return super(LoginFormView, self).form_valid(form)
 
-# def getId(request):
-#     id = request.user.id
-#     return (id)
 
+class LogoutView(View):
+    def get(self, request):
+        # Выполняем выход для пользователя, запросившего данное представление.
+        logout(request)
+
+        # После чего, перенаправляем пользователя на главную страницу.
+        return HttpResponseRedirect("/home")
+
+
+@login_required
 def practice(request):
     check = ''
     x = templates(check)
@@ -125,6 +100,8 @@ def practice(request):
         l.save()
     return render(request, 'mysite/practice.html',{'teacher_check' : teacher_check, 'answerCheck' : answerCheck, 'temp_text' : x[0], 'form' : form, 'answer': x[1]})
 
+
+@login_required
 def home(request, user_id):
     if request.user.id != int(user_id):
         raise Http404("Вы заходите не на свою страницу пользователя / не авторизованы")
@@ -212,6 +189,7 @@ def home(request, user_id):
             'text': x[0],'answer' : x[1], 'name' : x[2], 'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
 
 
+@login_required
 def temp_save(request):
     teacher_check = request.user.groups.filter(name='Учитель').exists()
     if request.user.groups.filter(name='Учитель').exists():
@@ -227,6 +205,7 @@ def temp_save(request):
         raise Http404("Вы не учитель")
 
 
+@login_required
 def temp_make(request):
     numberOfTemplatesUser = 0
     numberOfTasks = 0
@@ -306,29 +285,16 @@ def temp_make(request):
      'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka,  'check': check, 'test' : test, 'form3': form3})
 
 
-
-
-
-
-class LogoutView(View):
-    def get(self, request):
-        # Выполняем выход для пользователя, запросившего данное представление.
-        logout(request)
-
-        # После чего, перенаправляем пользователя на главную страницу.
-        return HttpResponseRedirect("/home")
-
-def home1 (request):
+@login_required
+def home1(request):
     id = request.user.id
     idHome = "/home/" + str(request.user.id)
     if id == None:
         idHome = '/login/'
     return HttpResponseRedirect(idHome)
 
-def lms (request):
+
+@login_required
+def lms(request):
     teacher_check = request.user.groups.filter(name='Учитель').exists()
     return render(request, 'mysite/lms.html',{'teacher_check' : teacher_check})
-
-# def mail(request):
-#     send_mail('Subject here', 'Here is the message.', 'vasily.komarov1997@gmail.com',
-#     ['ivan44050@gmail.com'], fail_silently=False)

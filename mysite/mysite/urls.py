@@ -15,20 +15,20 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from mysite.views import RegisterFormView, LoginFormView, LogoutView, home, lms , home1, temp_make, temp_save, practice#, #hello_pdf # , mail
+from mysite.views import RegisterFormView, LoginFormView, LogoutView, home, lms , home1, temp_make, temp_save, practice
+
+app_name = 'mysite'
 
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^register/$', RegisterFormView.as_view()),
+    url(r'^register/$', RegisterFormView.as_view(), name='register'),
     url(r'^login/$', LoginFormView.as_view()),
     url(r'^logout/$', LogoutView.as_view()),
     url(r'^home/$', home1, name='home'), # переделать
     url(r'^home/(?P<user_id>[0-9]+)/', home, name="homeid"),
-    #url(r'^mail/$', mail),
     url(r'^$', lms),
     url(r'^temp_make/', temp_make),
     url(r'^temp_save/', temp_save),
     url(r'^practice/', practice),
-    # url(r'^pdf/', hello_pdf)
 ]

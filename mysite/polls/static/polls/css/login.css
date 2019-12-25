@@ -1,0 +1,16 @@
+.login__block {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.login__block p {
+  text-align: center;
+}
+
+.login__block .btn {
+  width: 180px;
+  margin-bottom: 10px;
+}

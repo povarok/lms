@@ -1,10 +1,9 @@
-from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-from django.template import RequestContext, loader
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.views import generic
 from random import randint
+from django.contrib.auth.decorators import login_required
 from polls.models import ExcersiseTemplate, Replacers, NameForm, Primer, AnotherForm
 
 

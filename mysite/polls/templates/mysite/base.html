@@ -1,52 +1,56 @@
-{% load staticfiles %}
-{% load static %}
-<html>
-    <head>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <link rel="stylesheet" href='{% static "home.css"%}'/>
-        <title>{% block title %}{% endblock %}</title>
-    </head>
-    <body>
-        <div class="container-fluid">
-            <div class="raw">
-                <div class="col-lg-2">
-                    <div id="lms-logo">
-                        <p><img src='{% static "logo.png"%}' class="img-responsive" alt="тут должно быть лого"></p>
-                    </div>
-
-                    <br>
-                    <div id="text-navbar"><p class="text-center">Вы вошли как {{ user.username }}.</p></div>
-                    <ul class="nav nav-pills nav-stacked">
-                        <li {% block home %}{% endblock %} type="submit">
-                            <a href='/home'>Главная страница</a>
-                        <li {% block temp_make %}{% endblock %} type="submit">
-                            <a href="/temp_make"> Cоздать варианты заданий</a></li>
-                        <li {% block temp_save %}{% endblock %} type="submit">
-                            {% if teacher_check %}
-                            <a href="/temp_save"><font color="white">Создать свой шаблон</font></a>
-                            {% endif %}</li>
-                        <li {% block train %}{% endblock %} type="submit">
-                            <a href="/polls/primer">Тренажёр</a></li>
-                        <li {% block practice %}{% endblock %} type="submit">
-                            {% if user.is_authenticated %}
-                            <a href='/practice'>Практика</a>
-                            {% endif %}
-                        <li type="button">
-                            <a href="/logout/"><i class="icon-search icon-off"> </i> Выход</a></li>
-
-                    </ul>
-
-                </div>
-                <div class="col-lg-8">
-                    <p><h1 align="center" >{% block name %}{% endblock %}</h1></p>
-                    <br>
-                    <br>
-                    {% block content %}{% endblock %}
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8" content="width=device-width, user-scalable=0, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href='{% static "polls/css/base.css" %}'/>
+    {% block import %}
+    {% load static %}
+    {% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <div class="container-fluid main-container">
+        <div class="col-lg-2 nav__block">
+            <div id="lms-logo">
+                <p><img src='{% static "polls/media/logo.png" %}' class="img-responsive" alt="тут должно быть лого"></p>
             </div>
-        </div>
+            {% if user.is_authenticated %}
+            <div id="text-navbar">
+                <p class="text-center">Вы вошли как {{ user.username }}</p>
+            </div>
+            {% endif %}
+            <ul class="nav nav-pills nav-stacked">
+                <li {% block home %}{% endblock %} type="submit">
+                    <a class="navbar-link" href='{% url 'polls:index' %}'>Главная страница</a>
+                <li {% block temp_make %}{% endblock %} type="submit">
+                    <a href="/temp_make"> Cоздать варианты заданий</a></li>
+                <li {% block temp_save %}{% endblock %} type="submit">
+                    {% if teacher_check %}
+                    <a href="/temp_save"><font color="white">Создать свой шаблон</font></a>
+                    {% endif %}</li>
+                <li {% block train %}{% endblock %} type="submit">
+                    <a href="/polls/primer">Тренажёр</a></li>
+                <li {% block practice %}{% endblock %} type="submit">
+                    {% if user.is_authenticated %}
+                    <a href='/practice'>Практика</a>
+                    {% endif %}
+                <li type="button">
+                    <a href="/logout/"><i class="icon-search icon-off"> </i> Выход</a></li>
 
-    </body>
+            </ul>
+
+        </div>
+        <div class="col-lg-8">
+                <p><h1 align="center" >{% block name %}{% endblock %}</h1></p>
+                <br>
+                <br>
+                {% block content %}{% endblock %}
+            </div>
+    </div>
+</body>
 </html>
