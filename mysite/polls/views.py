@@ -5,9 +5,6 @@ from django.views import generic
 from random import randint
 from django.contrib.auth.decorators import login_required
 from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
-
-
-
 from .models import Question, Choice, Primer, NameForm
 
 
@@ -93,7 +90,6 @@ def vote(request, question_id):
 
 
 def primer(request):
-
     ch = (randint(1,10))
     chh = (randint(1,10))
     summm = ch+chh

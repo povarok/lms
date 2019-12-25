@@ -28,22 +28,25 @@
                 <li {% block home %}{% endblock %} type="submit">
                     <a class="navbar-link" href='{% url 'polls:home' %}'>Главная страница</a>
                 <li {% block temp_make %}{% endblock %} type="submit">
-                    <a href="/temp_make"> Cоздать варианты заданий</a></li>
+                    <a href="/temp_make"> Cоздать варианты заданий</a>
+                </li>
+                {% if teacher_check %}
                 <li {% block temp_save %}{% endblock %} type="submit">
-                    {% if teacher_check %}
-                    <a href="/temp_save"><font color="white">Создать свой шаблон</font></a>
-                    {% endif %}</li>
+                    <a href="/temp_save">Создать свой шаблон</a>
+                </li>
+                {% endif %}
                 <li {% block train %}{% endblock %} type="submit">
-                    <a href="/polls/primer">Тренажёр</a></li>
+                    <a href="{% url 'polls:primer' %}">Тренажёр</a>
+                </li>
+                {% if user.is_authenticated %}
                 <li {% block practice %}{% endblock %} type="submit">
-                    {% if user.is_authenticated %}
                     <a href='/practice'>Практика</a>
-                    {% endif %}
+                </li>
+                {% endif %}
                 <li type="button">
-                    <a href="/logout/"><i class="icon-search icon-off"> </i> Выход</a></li>
-
+                    <a href="/logout/"><i class="icon-search icon-off"> </i> Выход</a>
+                </li>
             </ul>
-
         </div>
         <div class="col-lg-8">
                 <p><h1 align="center" >{% block name %}{% endblock %}</h1></p>
