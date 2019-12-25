@@ -25,7 +25,7 @@ SECRET_KEY = 'o+b)l!^sh_-0&zlo2vg8@hgfzaz$tht_c&6^8)x#odfsl8=in&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.3' , '188.16.1.199' , 'localhost' , '127.0.0.1', 'lmstest.pythonanywhere.com' ]
+ALLOWED_HOSTS = ['192.168.1.3' , '188.16.1.199' , 'localhost' , '127.0.0.1', 'lmstest.pythonanywhere.com', 'edprivet.pythonanywhere.com' ]
 
 
 
@@ -101,11 +101,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
     #r'C:/Users/Yulia/Desktop/lms-master 2/mysite/polls/templates/mysite',
     os.path.join(BASE_DIR, "static"),
-    r'C:/GitHub/lms/mysite/polls/templates/mysite',
-)
+    '/home/EdPrivet/lms/mysite/static/'
+]
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -124,6 +124,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = '/home/EdPrivet/lms/mysite/static'
 # EMAIL_HOST = '127.0.0.1'
 # EMAIL_PORT = 1025

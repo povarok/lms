@@ -46,7 +46,7 @@ class Choice(models.Model):
     votes = models.IntegerField(default=0)
     def __str__(self):
         return self.choice_text
-    
+
 
 class Primer (models.Model):
     sl = models.CharField(max_length=200)
@@ -58,7 +58,7 @@ class NameForm(forms.Form):
     your_name = forms.CharField(label='Кол-во вариантов', max_length=100, required=True)
     fieldn = forms.CharField(label='Кол-во заданий в варианте', max_length=100, required=True)
 class AnotherForm(forms.Form):
-    field = forms.CharField(label='Не целые числа - через точку,к целым дописывается ".0"', max_length=100, required=False)
+    field = forms.CharField(label='Ответ',max_length=100, required=False)
     # ModelMultipleChoiceField(**kwargs)
 
 class SavedPrimer(models.Model):
