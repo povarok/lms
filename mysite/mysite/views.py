@@ -34,12 +34,10 @@ class RegisterFormView(FormView):
 
 class LoginFormView(FormView):
 
-
     form_class = AuthenticationForm
 
     # Аналогично регистрации, только используем шаблон аутентификации.
     template_name = "mysite/login.html"
-    #id = getId()
     # В случае успеха перенаправим на главную.
     success_url = "/home/" # + user.id <------ где его взять?
     #TODO как сделать корректный редирект на страницу вида /home/user.id ? ? ?
@@ -99,94 +97,6 @@ def practice(request):
     if request.user.id!=None:
         l.save()
     return render(request, 'mysite/practice.html',{'teacher_check' : teacher_check, 'answerCheck' : answerCheck, 'temp_text' : x[0], 'form' : form, 'answer': x[1]})
-
-
-@login_required
-def home(request, user_id):
-    if request.user.id != int(user_id):
-        raise Http404("Вы заходите не на свою страницу пользователя / не авторизованы")
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    print (teacher_check)
-    # i  = request.user.
-
-    # userGroup = request.user.groups.all()
-    # print (userGroup)
-    # print (request.user.groups.all()[0])
-
-    #ExcersiseTemplate.objects.create(text = 'test',name = 'test',correctAnswer = 'test',type = 'test',grade = 1,subject = 'test')
-
-
-
-    numberOfTemplatesUser = 0
-    stroka = []
-    check = ''
-    # /РЕШЕНО/ как в этой функции сгенерировать html код, использовав объекты из Replacers.objects.all() вместо city1,city2 etc. ??
-    #template_name = "mysite/dom.html"
-    success_url = "/login"
-    # раскомментируй строку снизу, чтобы отображать шаблон по фильтру
-    # template = ExcersiseTemplate.objects.filter(name="Повар").order_by('?').first()
-
-    # def templates():
-    #     template = ExcersiseTemplate.objects.order_by('?').first()
-    #     subs = template.get_subs()
-    #     answer = template.get_answer ()
-    #     # print ('как выглядят ответы',answer)
-    #     # print (subs)
-    #     # print (subs[0][0])
-    # #i=0
-    # #replacer = [0]*4
-    #     temp_text=template.text
-    #     temp_answer = template.correctAnswer
-    #     for name, number in subs:
-    #         replacer = Replacers.objects.filter(type=name).order_by("?").first().value
-    #         temp_text = temp_text.replace("{{"+name+number+"}}", replacer)
-    #         # print (temp_text)
-    #         # print(name,  number, replacer)
-    #         for nameAns, numberAns in answer:
-    #             if name == nameAns and number == numberAns:
-    #                 temp_answer = temp_answer.replace ("{{"+nameAns+numberAns+"}}", replacer)
-    #
-    # #temp_answer = eval(temp_answer)
-    #     temp_answer = float("{0:.2f}".format(eval(temp_answer)))
-    #
-    #     temp_name = template.name
-    #     return temp_text, temp_answer, temp_name
-
-    x = templates(check)
-
-    if request.method == 'POST':
-        numberOfTemplates = NameForm(request.POST)
-        if numberOfTemplates.is_valid():
-            numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
-            stroka = []
-            for i in range(int(numberOfTemplatesUser)):
-                y = templates()
-                stroka.append('Название задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
-                print (stroka)
-    else:
-        numberOfTemplates = NameForm()
-
-
-
-
-
-
-    # if request.method == 'POST':
-    #     form = forms(request.POST)
-    #     if form.is_valid():
-    #
-    #         request.user.email = form
-    # userMail = request.user.email
-
-
-        #replacer[i]= Replacers.objects.filter(type=name).order_by("?").first().value
-        #i+=1
-    
-    
-    
-
-    return render(request, 'mysite/dom.html',{'teacher_check' : teacher_check ,'groups': request.user.groups.all(),
-            'text': x[0],'answer' : x[1], 'name' : x[2], 'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka})
 
 
 @login_required
@@ -293,8 +203,3 @@ def home1(request):
         idHome = '/login/'
     return HttpResponseRedirect(idHome)
 
-
-@login_required
-def lms(request):
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    return render(request, 'mysite/lms.html',{'teacher_check' : teacher_check})

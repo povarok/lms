@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import generic
 from random import randint
 from django.contrib.auth.decorators import login_required
-from polls.models import ExcersiseTemplate, Replacers, NameForm, Primer, AnotherForm
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
 
 
 
@@ -30,6 +30,49 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
+@login_required
+def index(request):
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
+    context = {
+        'teacher_check': teacher_check
+    }
+    return render(request, 'mysite/lms.html', context)
+
+
+@login_required
+def home(request):
+    teacher_check = request.user.groups.filter(name='Учитель').exists()
+    numberOfTemplatesUser = 0
+    stroka = []
+    check = ''
+
+    x = templates(check)
+    if request.method == 'POST':
+        numberOfTemplates = NameForm(request.POST)
+        if numberOfTemplates.is_valid():
+            numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
+            stroka = []
+            for i in range(int(numberOfTemplatesUser)):
+                y = templates()
+                stroka.append('Название задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
+                print(stroka)
+    else:
+        numberOfTemplates = NameForm()
+
+    context = {
+        'teacher_check': teacher_check,
+        'groups': request.user.groups.all(),
+        'text': x[0],
+        'answer': x[1],
+        'name': x[2],
+        'number': numberOfTemplates,
+        'numberUser': numberOfTemplatesUser,
+        'stroka': stroka
+    }
+
+    return render(request, 'mysite/home.html', context)
+
+
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
@@ -47,6 +90,7 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
 
 def primer(request):
 
