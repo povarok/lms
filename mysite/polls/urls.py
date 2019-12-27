@@ -20,4 +20,10 @@ urlpatterns = [
     # ex: /polls/primer
     url(r'^primer$', views.primer, name='primer'),
 
+    url(r'^temp_save$', views.temp_save, name='temp_save'),
+
+    url(r'^temp_make$', views.temp_make, name='temp_make'),
+
+    url(r'^practice$', views.practice, name='practice'),
+
 ]
