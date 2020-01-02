@@ -106,6 +106,10 @@ def vote(request, question_id):
 
 
 def exercise_view(request):
+    return render(request, 'polls/primer.html')
+
+
+def get_exercise(request):
     fortune_wheel = (randint(1,4))
 
     if fortune_wheel == 1:
@@ -129,33 +133,9 @@ def exercise_view(request):
         result = round(ch/chh, 2)
         znak = "/"
     teacher_check = request.user.groups.filter(name='Учитель').exists()
-    # summmm = 0
-    # check = ''
-    #answer_check = 'Вы еще не ввели ответ'
-    # try:
-    #     if request.method == 'POST':
-    #         print(request)
-    #         form = AnotherForm(request.POST)
-    #         if form.is_valid():
-    #             cleaned_result = form.cleaned_data['field']
-    #             # print(cleaned_result, "cleanedresult")
-    #             # print (p,'не из бд',p.summ)
-    #             # print ('из БД',summa.summ)
-    #             # print("summa.summ, ", summa.summ, ', ', type(summa.summ))
-    #             # print("cleaned_result, ",cleaned_result,', ', type(cleaned_result))
     unsolved_exercise = Exercise(user_id=request.user.id, time_spent=None, correct_answer=result,
-                                           given_answer='', answer_is_correct=False, text=str(ch)+str(znak)+str(chh))
+                                 given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh))
     unsolved_exercise.save()
-
-     #   answerCheck = 'Вы еще не ввели ответ'
-    # Primer.objects.all().delete()
-    # p.save()
-    return render(request, 'polls/primer.html', {'teacher_check' : teacher_check,
-            'sl': ch, 'sll': chh,'znak' : znak, 'fortune_wheel': fortune_wheel, "result" : result})
-
-
-def get_exercise(request):
-    unsolved_exercise = Exercise.objects.filter(user_id=request.user.id).last()
     return JsonResponse({
         'text': unsolved_exercise.text,
         'pk': unsolved_exercise.pk
@@ -165,22 +145,34 @@ def get_exercise(request):
 def check_answer(request):
     print(request.user.pk)
     req = json.loads(request.body)
+    exercise = Exercise.objects.get(pk=request.pk)
+    exercise.given_answer = request.value
+    exercise.time_spent = request.time_spent
+    if exercise.given_answer == exercise.correct_answer:
+        exercise.answer_is_correct = True
+    else:
+        exercise.answer_is_correct = False
     print(req)
     return JsonResponse({
-        'is_correct': True
-    })
+        'is_correct': exercise.answer_is_correct
+    }, safe=False)
 
 
 def get_history(request):
     print(request.user.pk)
+    solved_exercises = Exercise.objects.filter(user_id=request.user.id)
+    history = []
+    for exercise in solved_exercises:
+        solved_exercise = {
+            'text': exercise.text,
+            'pk': exercise.pk,
+            'is_correct': exercise.answer_is_correct,
+            'correct_answer': exercise.correct_answer,
+            'given_answer': exercise.given_answer
+        }
+        history.append(solved_exercise)
     return JsonResponse(
-        [
-            {
-                'text': '2+2',
-                'pk': 1,
-                'is_correct': True
-            }
-        ]
+        history, safe=False
     )
 
 
