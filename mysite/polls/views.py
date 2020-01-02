@@ -173,7 +173,8 @@ def get_history(request):
             'pk': exercise.pk,
             'is_correct': exercise.answer_is_correct,
             'correct_answer': exercise.correct_answer,
-            'given_answer': exercise.given_answer
+            'given_answer': exercise.given_answer,
+            'time_spent': exercise.time_spent
         }
         history.append(solved_exercise)
     return JsonResponse(
