@@ -4,10 +4,10 @@ from django.urls import reverse
 from django.views import generic
 from random import randint
 from django.contrib.auth.decorators import login_required
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
-from .models import Question, Choice, Primer, NameForm
+#from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
+from .models import Question, Choice, Exercise, NameForm
 
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
+from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Exercise, TemplateForm, SavedPrimer,  makeNicePdf
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -109,24 +109,23 @@ def primer(request):
     if fortune_wheel == 1:
         ch = (randint(1,100))
         chh = (randint(1,100))
+        znak = '+'
         result = ch+chh
-        p = Primer (sl = str(ch),sll = str(chh),summ = str(result),znak = '+')
     if fortune_wheel == 2:
         ch = (randint(1, 100))
         chh = (randint(1, ch))
+        znak = '-'
         result = ch-chh
-        p = Primer (sl = str(ch),sll = str(chh),summ = str(result),znak = '-')
-    if fortune_wheel ==3:
-        ch = (randint(1,10))
-        chh = (randint(1,10))
+    if fortune_wheel == 3:
+        ch = (randint(1, 10))
+        chh = (randint(1, 10))
+        znak = '*'
         result = ch*chh
-        p = Primer (sl = str(ch),sll = str(chh),summ = str(result),znak = '*')
-    if fortune_wheel ==4:
+    if fortune_wheel == 4:
         chh = (randint(1, 10))
         ch = (randint(chh, 100))
         result = round(ch/chh, 2)
-        p = Primer (sl = str(ch),sll = str(chh),summ = str(result),znak = '/')
-    print("qavo", p)
+        znak = "/"
     teacher_check = request.user.groups.filter(name='Учитель').exists()
     summmm = 0
     check = ''
@@ -135,34 +134,33 @@ def primer(request):
         if request.method == 'POST':
             print(request)
             form = AnotherForm(request.POST)
-
-
             if form.is_valid():
                 cleaned_result = form.cleaned_data['field']
-                print(cleaned_result, "cleanedresult")
-                print (p,'не из бд',p.summ)
-                summa = Primer.objects.last()
-                print ('из БД',summa.summ)
-                print("summa.summ, ", summa.summ, ', ', type(summa.summ))
-                print("cleaned_result, ",cleaned_result,', ', type(cleaned_result))
-                if float(summa.summ) == float(cleaned_result):
+                # print(cleaned_result, "cleanedresult")
+                # print (p,'не из бд',p.summ)
+                # print ('из БД',summa.summ)
+                # print("summa.summ, ", summa.summ, ', ', type(summa.summ))
+                # print("cleaned_result, ",cleaned_result,', ', type(cleaned_result))
+                if float(result) == float(cleaned_result):
                     answer_check = True
                 else:
                     answer_check = False
+                solved_exercise = Exercise(user_id=request.user.id, time_spent=None, correct_answer=result,
+                                           given_answer=cleaned_result, answer_is_correct=answer_check, text=str(ch)+str(znak)+str(chh))
+                solved_exercise.save()
     except ValueError:
         answer_check = False
         print("valueerror")
         pass
 
-
     else:
         form = AnotherForm()
 
-        answerCheck = 'Вы еще не ввели ответ'
-    Primer.objects.all().delete()
-    p.save()
+     #   answerCheck = 'Вы еще не ввели ответ'
+    # Primer.objects.all().delete()
+    # p.save()
     return render(request, 'polls/primer.html', {'teacher_check' : teacher_check,
-            'sl': p.sl, 'sll': p.sll,'znak' : p.znak,'form' : form, 'number' : summmm,
+            'sl': ch, 'sll': chh,'znak' : znak,'form' : form, 'number' : summmm,
             'answer_check' : answer_check,  'check' : check, 'fortune_wheel': fortune_wheel, "result" : result})
 
 @login_required
@@ -198,7 +196,8 @@ def practice(request):
     SavedPrimer.objects.filter(user=request.user.id).all().delete()
     if request.user.id!=None:
         l.save()
-    return render(request, 'mysite/practice.html',{'teacher_check' : teacher_check, 'answerCheck' : answerCheck, 'temp_text' : x[0], 'form' : form, 'answer': x[1]})
+    return render(request, 'mysite/practice.html',{'teacher_check' : teacher_check, 'answerCheck' : answerCheck, 'temp_text' : x[0],
+                                                   'form' : form, 'answer': x[1]})
 
 
 @login_required

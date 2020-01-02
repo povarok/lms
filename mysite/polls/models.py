@@ -48,17 +48,20 @@ class Choice(models.Model):
         return self.choice_text
 
 
-class Primer (models.Model):
-    sl = models.CharField(max_length=200)
-    sll = models.CharField(max_length=200)
-    summ = models.CharField(max_length=200)
-    znak = models.CharField(max_length=200)
+class Exercise (models.Model):
+    user_id = models.PositiveIntegerField()
+    time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    correct_answer = models.CharField(max_length=200)
+    given_answer = models.CharField(max_length=200)
+    answer_is_correct = models.BooleanField()
+    text = models.TextField(max_length=1000)
+
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Кол-во вариантов', max_length=100, required=True)
     fieldn = forms.CharField(label='Кол-во заданий в варианте', max_length=100, required=True)
 class AnotherForm(forms.Form):
-    field = forms.CharField(label='Ответ',max_length=100, required=False)
+    field = forms.CharField(label='Ответ', max_length=100, required=False)
     # ModelMultipleChoiceField(**kwargs)
 
 class SavedPrimer(models.Model):
@@ -67,15 +70,13 @@ class SavedPrimer(models.Model):
     value = models.CharField(max_length=200)
 
 
-
-
 class ExcersiseTemplate(models.Model):
-    text = models.TextField ( max_length=1000)
-    name = models.CharField (max_length=200)
-    correctAnswer = models.CharField (max_length=200)
-    type = models.CharField (max_length=200)
-    grade = models.IntegerField ()
-    subject = models.CharField (max_length=200, default = "Null")
+    text = models.TextField(max_length=1000)
+    name = models.CharField(max_length=200)
+    correctAnswer = models.CharField(max_length=200)
+    type = models.CharField(max_length=200)
+    grade = models.IntegerField()
+    subject = models.CharField(max_length=200, default="Null")
 
     def get_subs(self):
          return re.findall(r'{{\s*([a-z]+)(\d+)\s*}}', self.text)
