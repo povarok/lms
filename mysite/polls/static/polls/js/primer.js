@@ -85,6 +85,7 @@ function getAnswersHistory() {
 <div class="block__row ${e.is_correct ? 'primer-text--good':'primer-text--bad'}">
 <span class="primer-text">${e.text} = </span>
                     <span class="primer-text">${e.given_answer}</span>${!e.is_correct ? `<span class="primer-text">${correctAnswer}</span>`:'' }
+                    <span>Время решения: ${e.time_spent}</span>
 </div>
                     `;
                    if (e.given_answer !== '') {
