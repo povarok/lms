@@ -3,20 +3,38 @@
 class="active"
 {% endblock %}
 {% block name %}Тренажёр{% endblock %}
+{% block import %}
+{% load static %}
+    <link type="text/css" rel="stylesheet" href="{% static 'polls/css/primer.css' %}">
+
+    <script>
+        const API_GET_PRIMER = "";
+        const API_CHECK_ANSWER = "";
+        const API_GET_HISTORY = "";
+    </script>
+    <script type="text/javascript" src="{% static 'polls/js/primer.js' %}"></script>
+{% endblock %}
 {% block content %}
+<section class="block__row block--center">
+    <form action="primer" method="post">
+        {{sl}} {{znak}} {{sll}} =
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Ответить" />
+        {%if answer_check %}
+            <font color="green" size="4"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
+        {% else %}
+            <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>
+        {% endif %}
+    </form>
+</section>
+<section class="block__row block--center">
+    <p class="no-data-message">Решенные примеры отсутствуют</p>
+    <div id="answers_history" class="block__col history__block">
 
-<form action="primer" method="post">
-    {{sl}} {{znak}} {{sll}} =
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Ответить" />
-    {%if answer_check %}
-        <font color="green" size="4"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
-    {% else %}
-        <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>
-    {% endif %}
+    </div>
 
-</form>
+</section>
 
 {% endblock %}
 

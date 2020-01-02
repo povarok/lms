@@ -32,3 +32,21 @@ body {
 .nav a:hover {
     color: #428bca;
 }
+
+.block__row {
+    display: flex;
+}
+
+.block__col {
+    display: flex;
+    flex-direction: column;
+}
+
+.block--center {
+    justify-content: center;
+    align-items: center;
+}
+
+.visible {
+    display: block;
+}

@@ -15,27 +15,14 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.contrib import admin
-from mysite.views import RegisterFormView, LoginFormView, LogoutView, home1, temp_make, temp_save, practice
+from mysite.views import RegisterFormView, LoginFormView, LogoutView
 from django.conf.urls import url
-from . import views
+
 
 urlpatterns = [
     path('', include('polls.urls')),
-    #path('admin/', admin.site.urls),
-    # path('register/', RegisterFormView.as_view(), name='register'),
-    # path('login/', LoginFormView.as_view()),
-    # path('logout/', LogoutView.as_view()),
-    # path('temp_make/', temp_make),
-    # path('temp_save/', temp_save),
-    # path('practice/', practice),
-    #url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^register/$', RegisterFormView.as_view(), name='register'),
     url(r'^login/$', LoginFormView.as_view()),
     url(r'^logout/$', LogoutView.as_view()),
-    url(r'^home/$', home1, name='home'),  # переделать
-    url(r'^temp_make/', temp_make),
-    url(r'^temp_save/', temp_save),
-    url(r'^practice/', practice)
- #   url(r'^practice$', views.practice, name='practice')
 ]
