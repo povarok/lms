@@ -3,6 +3,7 @@
 class="active"
 {% endblock %}
 {% block name %}Тренажёр{% endblock %}
+
 {% block import %}
 {% load static %}
     <link type="text/css" rel="stylesheet" href="{% static 'polls/css/primer.css' %}">
@@ -11,17 +12,28 @@ class="active"
         const API_GET_EXERCISE = "{% url 'polls:get_exercise' %}";
         const API_CHECK_ANSWER = "{% url 'polls:check_answer' %}";
         const API_GET_HISTORY = "{% url 'polls:get_history' %}";
+
     </script>
     <script type="text/javascript" src="{% static 'polls/js/primer.js' %}"></script>
 {% endblock %}
 {% block content %}
 {% csrf_token %}
-<section class="block__row block--center">
+    <script>
+        const CRSF_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    </script>
+<section class="block__col block--center">
         <div class="block__row">
-            <p class="primer-text" id="primer_text"></p>
-            <input type="number" placeholder="Введите ответ">
-            <button class="btn btn-primary btn-sm">Ответить</button>
+            <span class="primer-text" id="exerciseText"></span>
+            <input id="answer" type="number" placeholder="Введите ответ">
+            <button id="checkAnswer" class="btn btn-primary btn-sm">Ответить</button>
+            <div class="block__row block--center" style="margin-left: 12px;">
+                <i class="fas fa-clock time-icon" title="Время решения примера"></i>
+                <span id="timerValue" class="timer-value"></span>
+                <span id="timerUnit" class="timer-unit"></span>
+            </div>
+
         </div>
+
 
 {#        {{sl}} {{znak}} {{sll}} =#}
 {##}
@@ -35,8 +47,8 @@ class="active"
 
 </section>
 <section class="block__row block--center">
-    <p class="no-data-message">Решенные примеры отсутствуют</p>
-    <div id="answers_history" class="block__col history__block">
+    <p id="noHistoryMessage" class="no-data-message">Решенные примеры отсутствуют</p>
+    <div id="answersHistory" class="block__col history__block">
 
     </div>
 

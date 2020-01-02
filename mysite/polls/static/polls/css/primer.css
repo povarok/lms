@@ -8,3 +8,32 @@
   letter-spacing: 1px;
   margin: 0 8px 0 0;
 }
+
+.time-icon {
+  font-size: 24px;
+  color: #226793;
+  margin-right: 8px;
+}
+
+.timer-value {
+  width: 65px;
+  font-size: 24px;
+  text-align: right;
+}
+
+.timer-unit {
+  font-size: 18px;
+  font-weight: bold;
+  align-items: baseline;
+  display: flex;
+  justify-content: flex-end;
+  line-height: 1;
+}
+
+.primer-text--good {
+  background-color: green;
+}
+
+.primer-text--bad {
+  background-color: red;
+}

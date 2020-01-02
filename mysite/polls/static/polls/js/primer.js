@@ -14,7 +14,14 @@ function getPrimer() {
         },
         success: function (r) {
             console.log(r);
-            $('#primer_text').text(r.text);
+            $('#exerciseText').text(r.text);
+            $('#answer').data('pk', r.pk);
+            if (startTime === undefined) {
+                startTime = new Date().getTime();
+                timerLoop();
+            } else {
+                startTime = new Date().getTime();
+            }
         }
     }).fail(function (err) {
         console.log(`[AJAX] error ${API_GET_EXERCISE}`, err);
@@ -23,8 +30,9 @@ function getPrimer() {
 
 function checkAnswer() {
     const data = {
-        pk: parseInt($('#primer').data('pk')),
-        value: parseFloat($('#primer').val())
+        pk: parseInt($('#answer').data('pk')),
+        value: parseFloat($('#answer').val()),
+        time_spent: new Date().getTime() - startTime
     };
     if (isNaN(data.value)) {
         alert('Некорректный ответ');
@@ -35,6 +43,9 @@ function checkAnswer() {
         url: API_CHECK_ANSWER,
         contentType: 'application/json',
         crossDomain: true,
+        headers: {
+            "X-CSRFToken":CRSF_token
+        },
         data: JSON.stringify(data),
         beforeSend: function() {
         },
@@ -42,6 +53,8 @@ function checkAnswer() {
         },
         success: function (r) {
             console.log(r);
+            getPrimer();
+            getAnswersHistory();
         }
     }).fail(function (err) {
         console.log(`[AJAX] error ${API_CHECK_ANSWER}`, err);
@@ -60,14 +73,51 @@ function getAnswersHistory() {
         },
         success: function (r) {
             console.log(r);
+            if (r.length === 0) {
+                $('#noHistoryMessage').show();
+                $('#answersHistory').hide();
+            } else {
+                r.forEach(e=>{
+                    const correctAnswer = e.correct_answer;
+                   const exerciseRow = d.createElement('div');
+                   exerciseRow.innerHTML = `
+                    <span class="primer-text ${e.is_correct ? 'primer-text--good':'primer-text--bad'}">${e.text}</span>
+                    <span class="answer">${e.user_answer}</span>${!e.is_correct ? `<span class="answer">${correctAnswer}</span>`:'' }`;
+                   $('#answersHistory').append(exerciseRow);
+                });
+                $('#noHistoryMessage').show();
+                $('#answersHistory').hide();
+            }
         }
     }).fail(function (err) {
         console.log(`[AJAX] error ${API_GET_HISTORY}`, err);
     });
 }
 
+let time = 0;
+let startTime;
+function timerLoop() {
+    time = Math.round((new Date().getTime() - startTime)/1000 * 100) / 100;
+    if (time/60 > 1) {
+        $('#timerValue').text(Math.round(time/60));
+        $('#timerUnit').text('м.');
+    } else {
+        $('#timerValue').text(time);
+        $('#timerUnit').text('c.');
+    }
+    setTimeout(timerLoop,500);
+}
+
+function attachListeners() {
+    $('#checkAnswer').click(function () {
+        checkAnswer();
+    });
+}
+
 function init() {
+    attachListeners();
     getPrimer();
+    getAnswersHistory();
 }
 
 $(d).ready(function () {
