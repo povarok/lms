@@ -77,6 +77,7 @@ function getAnswersHistory() {
                 $('#noHistoryMessage').show();
                 $('#answersHistory').hide();
             } else {
+                $('#answersHistory').html('');
                 r.forEach(e=>{
                     const correctAnswer = e.correct_answer;
                    const exerciseRow = d.createElement('div');
