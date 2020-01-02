@@ -81,12 +81,18 @@ function getAnswersHistory() {
                     const correctAnswer = e.correct_answer;
                    const exerciseRow = d.createElement('div');
                    exerciseRow.innerHTML = `
-                    <span class="primer-text ${e.is_correct ? 'primer-text--good':'primer-text--bad'}">${e.text}</span>
-                    <span class="answer">${e.user_answer}</span>${!e.is_correct ? `<span class="answer">${correctAnswer}</span>`:'' }`;
-                   $('#answersHistory').append(exerciseRow);
+<div class="block__row ${e.is_correct ? 'primer-text--good':'primer-text--bad'}">
+<span class="primer-text">${e.text} = </span>
+                    <span class="primer-text">${e.given_answer}</span>${!e.is_correct ? `<span class="primer-text">${correctAnswer}</span>`:'' }
+</div>
+                    `;
+                   if (e.given_answer !== '') {
+                       $('#answersHistory').append(exerciseRow);
+                   }
+
                 });
-                $('#noHistoryMessage').show();
-                $('#answersHistory').hide();
+                $('#noHistoryMessage').hide();
+                $('#answersHistory').show();
             }
         }
     }).fail(function (err) {

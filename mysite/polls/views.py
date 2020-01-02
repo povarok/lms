@@ -22,6 +22,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
+import datetime
 
 
 class IndexView(generic.ListView):
@@ -145,16 +146,20 @@ def get_exercise(request):
 def check_answer(request):
     print(request.user.pk)
     req = json.loads(request.body)
-    exercise = Exercise.objects.get(pk=request.pk)
-    exercise.given_answer = request.value
-    exercise.time_spent = request.time_spent
-    if exercise.given_answer == exercise.correct_answer:
-        exercise.answer_is_correct = True
-    else:
-        exercise.answer_is_correct = False
     print(req)
+
+    exercise = Exercise.objects.get(pk=req['pk'])
+    exercise.given_answer = req['value']
+    exercise.time_spent = datetime.datetime.fromtimestamp(req['time_spent'])
+    is_correct = exercise.given_answer == float(exercise.correct_answer)
+    print('IS COR')
+    print(is_correct, exercise.given_answer, exercise.correct_answer)
+    exercise.answer_is_correct = is_correct
+    exercise.save()
+
+
     return JsonResponse({
-        'is_correct': exercise.answer_is_correct
+        'is_correct': is_correct
     }, safe=False)
 
 

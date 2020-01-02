@@ -9,3 +9,4 @@
 .idea/dataSources.xml
 .idea/dataSources/
 exercise.pdf
+*.sqlite3
