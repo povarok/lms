@@ -26,13 +26,13 @@
             {% endif %}
             <ul class="nav nav-pills nav-stacked">
                 <li {% block home %}{% endblock %} type="submit">
-                    <a class="navbar-link" href='{% url 'polls:home' %}'>Главная страница</a>
+                    <a class="navbar-link" href="{% url 'polls:home' %}">Главная страница</a>
                 <li {% block temp_make %}{% endblock %} type="submit">
-                    <a href="/temp_make"> Cоздать варианты заданий</a>
+                    <a href="{% url 'polls:temp_make' %}"> Cоздать варианты заданий</a>
                 </li>
                 {% if teacher_check %}
                 <li {% block temp_save %}{% endblock %} type="submit">
-                    <a href="/temp_save">Создать свой шаблон</a>
+                    <a href="{% url 'polls:temp_save' %}">Создать свой шаблон</a>
                 </li>
                 {% endif %}
                 <li {% block train %}{% endblock %} type="submit">
@@ -40,7 +40,7 @@
                 </li>
                 {% if user.is_authenticated %}
                 <li {% block practice %}{% endblock %} type="submit">
-                    <a href='/practice'>Практика</a>
+                    <a href="{% url 'polls:practice' %}">Практика</a>
                 </li>
                 {% endif %}
                 <li type="button">

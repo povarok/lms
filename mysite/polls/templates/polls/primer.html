@@ -10,7 +10,7 @@ class="active"
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Ответить" />
-    {%if answerCheck %}
+    {%if answer_check %}
         <font color="green" size="4"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
     {% else %}
         <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>
