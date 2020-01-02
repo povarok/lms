@@ -12,6 +12,8 @@ urlpatterns = [
     path('temp_make/', views.temp_make, name='temp_make'),
     path('practice/', views.practice, name='practice'),
 
+
+
     # ex: /polls/5/
     url(r'^(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='detail'),
     # ex: /polls/5/results/
@@ -20,7 +22,10 @@ urlpatterns = [
     url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
 
     # ex: /polls/primer
-    url(r'^primer$', views.primer, name='primer'),
+    url(r'^primer$', views.exercise_view, name='primer'),
+    path('api_get_exercise/', views.get_exercise, name='get_exercise'),
+    path('api_check_answer/', views.check_answer, name='check_answer'),
+    path('api_get_history/', views.get_history, name='get_history'),
 
     url(r'^temp_save$', views.temp_save, name='temp_save'),
 

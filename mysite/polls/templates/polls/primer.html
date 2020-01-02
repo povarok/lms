@@ -8,25 +8,31 @@ class="active"
     <link type="text/css" rel="stylesheet" href="{% static 'polls/css/primer.css' %}">
 
     <script>
-        const API_GET_PRIMER = "";
-        const API_CHECK_ANSWER = "";
-        const API_GET_HISTORY = "";
+        const API_GET_EXERCISE = "{% url 'polls:get_exercise' %}";
+        const API_CHECK_ANSWER = "{% url 'polls:check_answer' %}";
+        const API_GET_HISTORY = "{% url 'polls:get_history' %}";
     </script>
     <script type="text/javascript" src="{% static 'polls/js/primer.js' %}"></script>
 {% endblock %}
 {% block content %}
+{% csrf_token %}
 <section class="block__row block--center">
-    <form action="primer" method="post">
-        {{sl}} {{znak}} {{sll}} =
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Ответить" />
-        {%if answer_check %}
-            <font color="green" size="4"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
-        {% else %}
-            <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>
-        {% endif %}
-    </form>
+        <div class="block__row">
+            <p class="primer-text" id="primer_text"></p>
+            <input type="number" placeholder="Введите ответ">
+            <button class="btn btn-primary btn-sm">Ответить</button>
+        </div>
+
+{#        {{sl}} {{znak}} {{sll}} =#}
+{##}
+{#        {{ form }}#}
+{#        <input type="submit" value="Ответить" />#}
+{#        {%if answer_check %}#}
+{#            <font color="green" size="4"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>#}
+{#        {% else %}#}
+{#            <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>#}
+{#        {% endif %}#}
+
 </section>
 <section class="block__row block--center">
     <p class="no-data-message">Решенные примеры отсутствуют</p>

@@ -5,7 +5,7 @@ const d = document;
 function getPrimer() {
     $.ajax({
         method: 'GET',
-        url: API_GET_PRIMER,
+        url: API_GET_EXERCISE,
         contentType: 'application/json',
         crossDomain: true,
         beforeSend: function() {
@@ -14,9 +14,10 @@ function getPrimer() {
         },
         success: function (r) {
             console.log(r);
+            $('#primer_text').text(r.text);
         }
     }).fail(function (err) {
-        console.log('[AJAX] error ', err);
+        console.log(`[AJAX] error ${API_GET_EXERCISE}`, err);
     });
 }
 
@@ -43,11 +44,11 @@ function checkAnswer() {
             console.log(r);
         }
     }).fail(function (err) {
-        console.log([AJAX] error ``, err);
+        console.log(`[AJAX] error ${API_CHECK_ANSWER}`, err);
     });
 }
 
-function getAnswersHistory(){
+function getAnswersHistory() {
     $.ajax({
         method: 'GET',
         url: API_GET_HISTORY,
@@ -61,11 +62,16 @@ function getAnswersHistory(){
             console.log(r);
         }
     }).fail(function (err) {
-        console.log('[AJAX] error ', err);
+        console.log(`[AJAX] error ${API_GET_HISTORY}`, err);
     });
+}
+
+function init() {
+    getPrimer();
 }
 
 $(d).ready(function () {
     console.log('primer ready');
+    init();
 
 });

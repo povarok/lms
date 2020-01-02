@@ -20,6 +20,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+import json
 
 
 class IndexView(generic.ListView):
@@ -103,7 +105,7 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
-def primer(request):
+def exercise_view(request):
     fortune_wheel = (randint(1,4))
 
     if fortune_wheel == 1:
@@ -162,6 +164,36 @@ def primer(request):
     return render(request, 'polls/primer.html', {'teacher_check' : teacher_check,
             'sl': ch, 'sll': chh,'znak' : znak,'form' : form, 'number' : summmm,
             'answer_check' : answer_check,  'check' : check, 'fortune_wheel': fortune_wheel, "result" : result})
+
+
+def get_exercise(request):
+    return JsonResponse({
+        'text': '2+2',
+        'pk': 1
+    })
+
+
+def check_answer(request):
+    print(request.user.pk)
+    req = json.loads(request.body)
+    print(req)
+    return JsonResponse({
+        'is_correct': True
+    })
+
+
+def get_history(request):
+    print(request.user.pk)
+    return JsonResponse(
+        [
+            {
+                'text': '2+2',
+                'pk': 1,
+                'is_correct': True
+            }
+        ]
+    )
+
 
 @login_required
 def practice(request):
