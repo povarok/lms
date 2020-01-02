@@ -99,13 +99,13 @@ let startTime;
 function timerLoop() {
     time = Math.round((new Date().getTime() - startTime)/1000 * 100) / 100;
     if (time/60 > 1) {
-        $('#timerValue').text(Math.round(time/60));
+        $('#timerValue').text(Math.round(time/60 * 10)/10);
         $('#timerUnit').text('м.');
     } else {
         $('#timerValue').text(time);
         $('#timerUnit').text('c.');
     }
-    setTimeout(timerLoop,500);
+    setTimeout(timerLoop,1000);
 }
 
 function attachListeners() {
