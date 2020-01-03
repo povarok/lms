@@ -32,7 +32,7 @@ function checkAnswer() {
     const data = {
         pk: parseInt($('#answer').data('pk')),
         value: parseFloat($('#answer').val()),
-        time_spent: new Date().getTime() - startTime
+        time_spent: (new Date().getTime() - startTime)/1000
     };
     if (isNaN(data.value)) {
         alert('Некорректный ответ');
