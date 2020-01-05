@@ -29,15 +29,17 @@ function getPrimer() {
 }
 
 function checkAnswer() {
+
     const data = {
         pk: parseInt($('#answer').data('pk')),
-        value: parseFloat($('#answer').val()),
+        value: $('#answer').val(),
         time_spent: (new Date().getTime() - startTime)/1000
     };
-    if (isNaN(data.value)) {
-        alert('Некорректный ответ');
-        return;
-    }
+    console.log('zhopa', data.value)
+//    if (isNaN(data.value)) {
+//        alert('Некорректный ответ');
+//        return;
+//    }
     $.ajax({
         method: 'POST',
         url: API_CHECK_ANSWER,
@@ -79,7 +81,7 @@ function getAnswersHistory() {
             } else {
                 $('#answersHistory').html('');
                 r.reverse().forEach(e=>{
-                    const correctAnswer = e.correct_answer;
+                   const correctAnswer = e.correct_answer;
                    const exerciseRow = d.createElement('div');
                    exerciseRow.innerHTML = `
 <div class="block__row ${e.is_correct ? 'primer-text--good':'primer-text--bad'}">
@@ -110,7 +112,7 @@ function timerLoop() {
         $('#timerValue').text(Math.round(time/60 * 10)/10);
         $('#timerUnit').text('м.');
     } else {
-        $('#timerValue').text(time);
+        $('#timerValue').text(Math.round(time));
         $('#timerUnit').text('c.');
     }
     setTimeout(timerLoop,1000);

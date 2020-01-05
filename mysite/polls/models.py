@@ -5,7 +5,7 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.pagesizes import A4, letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
+from django.contrib.postgres.fields import JSONField
 
 from reportlab.platypus import Paragraph,SimpleDocTemplate
 from reportlab.lib.styles import getSampleStyleSheet
@@ -48,13 +48,14 @@ class Choice(models.Model):
         return self.choice_text
 
 
-class Exercise (models.Model):
+class Exercise(models.Model):
     user_id = models.PositiveIntegerField()
     time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
     correct_answer = models.CharField(max_length=200)
     given_answer = models.CharField(max_length=200)
     answer_is_correct = models.BooleanField()
     text = models.TextField(max_length=1000)
+    correct_answers = models.CharField(max_length=200, blank=True, null=True)
 
 
 class NameForm(forms.Form):
