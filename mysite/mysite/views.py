@@ -39,7 +39,7 @@ class LoginFormView(FormView):
     # Аналогично регистрации, только используем шаблон аутентификации.
     template_name = "mysite/login.html"
     # В случае успеха перенаправим на главную.
-    success_url = "/home/" # + user.id <------ где его взять?
+    success_url = "/" # + user.id <------ где его взять?
     #TODO как сделать корректный редирект на страницу вида /home/user.id ? ? ?
 
     def form_valid(self, form):

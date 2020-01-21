@@ -1,9 +1,10 @@
 {% extends "mysite/base.html" %}
 
 {% block title %}LMS{% endblock %}
-{% block name %}ЛМС{% endblock %}
+{% block name %}Тренажёр{% endblock %}
 {% block content %}
-    <p>Это ЛМС</p>
-    <p><a href="/home/" align="center"><button><h4>Понял.</button></a></p>
+    <p>Ваша задача - разложить одно из слагаемых на два таким образом, чтобы в сумме со вторым одно из двух полученных давало 10. В ответ записать выбранное вами слагаемое в разложенном виде.</p>
+    <p>Пример: 9+5 = 4+5+5, здесь разложили 9 на 4 и 5, соответственно в ответ будет записано "4+5".</p>
+    <p><a href="/primer" align="center"><button class="btn btn-primary btn" ><h4>Понятно.</button></a></p>
 
 {% endblock %}

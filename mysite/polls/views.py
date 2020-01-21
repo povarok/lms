@@ -46,11 +46,11 @@ class ResultsView(generic.DetailView):
 
 @login_required
 def index(request):
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    context = {
-        'teacher_check': teacher_check
-    }
-    return render(request, 'mysite/lms.html', context)
+    # teacher_check = request.user.groups.filter(name='Учитель').exists()
+    # context = {
+    #     'teacher_check': teacher_check
+    # }
+    return render(request, 'mysite/lms.html')
 
 
 @login_required
@@ -119,9 +119,12 @@ def get_exercise(request):
         znak = '+'
         result = ch+chh
         excess_value = result - 10
-        correct_answers = [str(ch-excess_value) + '+' + str(ch-(ch-excess_value)), str(ch-(ch-excess_value)) + '+' + str(ch-excess_value),
-                           str(chh-excess_value) + '+' + str(chh-(chh-excess_value)), str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)]
+        correct_answers = str(set([str(ch-excess_value) + '+' + str(ch-(ch-excess_value)),
+                                   str(ch-(ch-excess_value)) + '+' + str(ch-excess_value),
+                                   str(chh-excess_value) + '+' + str(chh-(chh-excess_value)),
+                                   str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)])).replace('{','').replace("'",'').replace('}','')
         print('corans', correct_answers, 'qqq', str(correct_answers))
+        print(type(correct_answers), 'bbbbb')
     if fortune_wheel == 2:
         ch = (randint(1, 100))
         chh = (randint(1, ch))
@@ -139,7 +142,8 @@ def get_exercise(request):
         znak = "/"
     teacher_check = request.user.groups.filter(name='Учитель').exists()
     unsolved_exercise = Exercise(user_id=request.user.id, time_spent=None, correct_answer=result,
-                                 given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh), correct_answers=json.dumps(correct_answers))
+                                 given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh), correct_answers=correct_answers)
+    print(type(unsolved_exercise.correct_answers), 'last')
     unsolved_exercise.save()
     return JsonResponse({
         'text': unsolved_exercise.text,
@@ -155,14 +159,13 @@ def check_answer(request):
     exercise.given_answer = req['value']
     print('req', req['value'])
     exercise.time_spent = datetime.datetime.fromtimestamp(req['time_spent'])
-    is_correct = exercise.given_answer == float(exercise.correct_answer)
-    if str(exercise.given_answer) in exercise.correct_answers:
-        print('qavoblet')
+    correct_answers = exercise.correct_answers.split(', ')
+    #is_correct = exercise.given_answer == float(exercise.correct_answer)
+    if str(exercise.given_answer) != '' and str(exercise.given_answer) in correct_answers:
         is_correct = True
     else:
         is_correct = False
-    print('IS COR')
-    print(is_correct, str(exercise.given_answer), exercise.correct_answer)
+    print(is_correct, str(exercise.given_answer), correct_answers)
     exercise.answer_is_correct = is_correct
     exercise.save()
 

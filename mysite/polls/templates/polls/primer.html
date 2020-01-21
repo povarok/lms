@@ -24,8 +24,8 @@ class="active"
 <section class="block__col block--center">
         <div class="block__row">
             <span class="primer-text" id="exerciseText"></span>
-            <input id="answer" type="string" placeholder="Введите ответ">
-            <button id="checkAnswer" class="btn btn-primary btn-sm">Ответить</button>
+            <input id="answer" type="string" placeholder="Введите ответ" size="12">
+            <button id="checkAnswer" class="btn btn-primary btn">Ответить</button>
             <div class="block__row block--center" style="margin-left: 12px;">
                 <i class="fas fa-clock time-icon" title="Время решения примера"></i>
                 <span id="timerValue" class="timer-value"></span>
@@ -48,9 +48,20 @@ class="active"
 </section>
 <section class="block__row block--center" style="margin-top: 30px;">
     <p id="noHistoryMessage" class="no-data-message">Решенные примеры отсутствуют</p>
-    <div id="answersHistory" class="block__col history__block">
+    <table id="answersHistory" class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Пример</th>
+              <th scope="col">Данный ответ</th>
+              <th scope="col">Правильные ответы</th>
+              <th scope="col">Время решения</th>
+              <th scope="col">Проверка</th>
+            </tr>
+          </thead>
+        <tbody id="answersHistoryBody">
 
-    </div>
+        </tbody>
+    </table>
 
 </section>
 

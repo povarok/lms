@@ -21,6 +21,8 @@ function getPrimer() {
                 timerLoop();
             } else {
                 startTime = new Date().getTime();
+                ClearСlock();
+                timerLoop();
             }
         }
     }).fail(function (err) {
@@ -35,11 +37,10 @@ function checkAnswer() {
         value: $('#answer').val(),
         time_spent: (new Date().getTime() - startTime)/1000
     };
-    console.log('zhopa', data.value)
-//    if (isNaN(data.value)) {
-//        alert('Некорректный ответ');
-//        return;
-//    }
+    if (data.value == '') {
+        alert('Введите ответ');
+        return;
+    }
     $.ajax({
         method: 'POST',
         url: API_CHECK_ANSWER,
@@ -79,19 +80,19 @@ function getAnswersHistory() {
                 $('#noHistoryMessage').show();
                 $('#answersHistory').hide();
             } else {
-                $('#answersHistory').html('');
+                $('#answersHistoryBody').html('');
                 r.reverse().forEach(e=>{
                    const correctAnswer = e.correct_answer;
-                   const exerciseRow = d.createElement('div');
+                   const exerciseRow = d.createElement('tr');
                    exerciseRow.innerHTML = `
-<div class="block__row ${e.is_correct ? 'primer-text--good':'primer-text--bad'}">
-<span class="primer-text">${e.text} = </span>
-                    <span class="primer-text">${e.given_answer}</span>${!e.is_correct ? `<span class="primer-text">${correctAnswer}</span>`:'' }
-                    <span>Время решения: ${e.time_spent}</span>
-</div>
+                    <td>${e.text}</td>
+                    <td>${e.given_answer}</td>
+                    <td>${correctAnswer}</td>
+                    <td>${e.time_spent}</td>
+                    ${e.is_correct ? '<td><font color="#00cc00" size="5"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font></td>':'<td><font color="#ff5050" size="5"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font></td>'}
                     `;
                    if (e.given_answer !== '') {
-                       $('#answersHistory').append(exerciseRow);
+                       $('#answersHistoryBody').append(exerciseRow);
                    }
 
                 });
@@ -106,17 +107,95 @@ function getAnswersHistory() {
 
 let time = 0;
 let startTime;
-function timerLoop() {
-    time = Math.round((new Date().getTime() - startTime)/1000 * 100) / 100;
-    if (time/60 > 1) {
-        $('#timerValue').text(Math.round(time/60 * 10)/10);
-        $('#timerUnit').text('м.');
-    } else {
-        $('#timerValue').text(Math.round(time));
-        $('#timerUnit').text('c.');
-    }
-    setTimeout(timerLoop,1000);
+//объявляем переменные
+var base = 60;
+var clocktimer, dateObj, dh, dm, ds, ms;
+var readout = '';
+var h = 1,
+  m = 1,
+  tm = 1,
+  s = 0,
+  ts = 0,
+  ms = 0
+
+//функция для очистки поля
+function ClearСlock() {
+  clearTimeout(clocktimer);
+  h = 1;
+  m = 1;
+  tm = 1;
+  s = 0;
+  ts = 0;
+  ms = 0;
+  readout = '00:00:00';
+  $('#timerValue').text(readout);
 }
+
+//функция для старта секундомера
+function timerLoop() {
+  var cdateObj = new Date();
+  var t = (cdateObj.getTime() - startTime) - (s * 1000);
+  if (t > 999) {
+    s++;
+  }
+  if (s >= (m * base)) {
+    ts = 0;
+    m++;
+  } else {
+    ts = parseInt((ms / 100) + s);
+    if (ts >= base) {
+      ts = ts - ((m - 1) * base);
+    }
+  }
+  if (m > (h * base)) {
+    tm = 1;
+    h++;
+  } else {
+    tm = parseInt((ms / 100) + m);
+    if (tm >= base) {
+      tm = tm - ((h - 1) * base);
+    }
+  }
+  ms = Math.round(t / 10);
+  if (ms > 99) {
+    ms = 0;
+  }
+  if (ms == 0) {
+    ms = '00';
+  }
+  if (ms > 0 && ms <= 9) {
+    ms = '0' + ms;
+  }
+  if (ts > 0) {
+    ds = ts;
+    if (ts < 10) {
+      ds = '0' + ts;
+    }
+  } else {
+    ds = '00';
+  }
+  dm = tm - 1;
+  if (dm > 0) {
+    if (dm < 10) {
+      dm = '0' + dm;
+    }
+  } else {
+    dm = '00';
+  }
+  dh = h - 1;
+  if (dh > 0) {
+    if (dh < 10) {
+      dh = '0' + dh;
+    }
+  } else {
+    dh = '00';
+  }
+  readout = dh + ':' + dm + ':' + ds;
+  $('#timerValue').text(readout);
+
+  clocktimer = setTimeout(timerLoop, 1000);
+}
+
 
 function attachListeners() {
     $('#checkAnswer').click(function () {

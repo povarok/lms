@@ -22,36 +22,41 @@
     <div class="container-fluid main-container">
         <div class="col-lg-2 nav__block">
             <div id="lms-logo">
-                <p><img src='{% static "polls/media/logo.png" %}' class="img-responsive" alt="тут должно быть лого"></p>
+                <p><img src='{% static "polls/media/sitsh logo.jpg" %}' class="img-responsive" alt="тут должно быть лого"></p>
             </div>
             {% if user.is_authenticated %}
             <div id="text-navbar">
                 <p class="text-center">Вы вошли как {{ user.username }}</p>
             </div>
             {% endif %}
+
             <ul class="nav nav-pills nav-stacked">
+                {% if teacher_check %}
                 <li {% block home %}{% endblock %} type="submit">
                     <a class="navbar-link" href="{% url 'polls:home' %}">Главная страница</a>
                 <li {% block temp_make %}{% endblock %} type="submit">
                     <a href="{% url 'polls:temp_make' %}"> Cоздать варианты заданий</a>
                 </li>
-                {% if teacher_check %}
                 <li {% block temp_save %}{% endblock %} type="submit">
                     <a href="{% url 'polls:temp_save' %}">Создать свой шаблон</a>
                 </li>
-                {% endif %}
+
                 <li {% block train %}{% endblock %} type="submit">
                     <a href="{% url 'polls:primer' %}">Тренажёр</a>
                 </li>
-                {% if user.is_authenticated %}
+
                 <li {% block practice %}{% endblock %} type="submit">
                     <a href="{% url 'polls:practice' %}">Практика</a>
                 </li>
                 {% endif %}
+
+                {% if user.is_authenticated %}
                 <li type="button">
                     <a href="/logout/"><i class="icon-search icon-off"> </i> Выход</a>
                 </li>
+                {% endif %}
             </ul>
+
         </div>
         <div class="col-lg-8">
                 <p><h1 align="center" >{% block name %}{% endblock %}</h1></p>
