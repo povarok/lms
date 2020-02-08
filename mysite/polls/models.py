@@ -13,7 +13,7 @@ from reportlab.lib.pagesizes import A4
 import reportlab.rl_config
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
+from django.contrib.auth.models import User
 
 
 from django.db import models
@@ -31,31 +31,57 @@ from reportlab.pdfgen import canvas
 
 
 # Create your models here.
-class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
-    def __str__(self):
-        return self.question_text
-    def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+class ExerciseTypes(models.Model):
+    name = models.CharField(verbose_name="Тип примера", max_length=200)
+    description = models.TextField(verbose_name="Описание")
 
+class Grades(models.Model):
+    perfect = models.PositiveIntegerField(verbose_name="Отлично")
+    good = models.PositiveIntegerField(verbose_name="Хорошо")
+    satisfactory = models.PositiveIntegerField(verbose_name="Удовлетворительно")
+    class Meta:
+        abstract = True
 
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
-    def __str__(self):
-        return self.choice_text
+class TrainingApparatus(Grades):
+    name = models.CharField(verbose_name="Название тренажера", max_length=200)
+    exercises_type = models.ForeignKey(ExerciseTypes, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
+    exercises_amount = models.PositiveIntegerField(default=0)
+    allotted_time = models.TimeField(auto_now=False, auto_now_add=False)
 
+class TrainingTest(models.Model):
+    apparatus = models.ForeignKey(TrainingApparatus, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None, blank=True, null=True)
+    grade = models.PositiveIntegerField()
+    solved_exercises = models.PositiveIntegerField(default=0)
+    correct_answers = models.PositiveIntegerField(default=0)
+    time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
 
 class Exercise(models.Model):
-    user_id = models.PositiveIntegerField()
+    type = models.ForeignKey(ExerciseTypes, on_delete=models.CASCADE, default=None, blank=True, null=True)
+    test_id = models.ForeignKey(TrainingTest, on_delete=models.CASCADE, default=None, blank=True, null=True)
     time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
     correct_answer = models.CharField(max_length=200)
     given_answer = models.CharField(max_length=200)
     answer_is_correct = models.BooleanField()
     text = models.TextField(max_length=1000)
     correct_answers = models.CharField(max_length=200, blank=True, null=True)
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class NameForm(forms.Form):

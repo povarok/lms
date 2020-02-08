@@ -13,20 +13,12 @@ urlpatterns = [
     path('practice/', views.practice, name='practice'),
 
 
-
-    # ex: /polls/5/
-    url(r'^(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='detail'),
-    # ex: /polls/5/results/
-    url(r'^(?P<pk>[0-9]+)/results/$', views.ResultsView.as_view(), name='results'),
-    # ex: /polls/5/vote/
-    url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
-
     # ex: /polls/primer
     url(r'^primer$', views.exercise_view, name='primer'),
-    path('api_get_exercise/', views.get_exercise, name='get_exercise'),
+    path('api_get_exercise_from_test/', views.get_exercise_from_test, name='get_exercise_from_test'),
     path('api_check_answer/', views.check_answer, name='check_answer'),
     path('api_get_history/', views.get_history, name='get_history'),
-
+    #path('api_get_test/')
     url(r'^temp_save$', views.temp_save, name='temp_save'),
 
 

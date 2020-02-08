@@ -5,8 +5,8 @@ from django.views import generic
 from random import randint
 from django.contrib.auth.decorators import login_required
 #from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
-from .models import Question, Choice, Exercise, NameForm
-
+from .models import Exercise, NameForm, TrainingTest, TrainingApparatus
+from django.contrib.auth.models import User
 from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Exercise, TemplateForm, SavedPrimer,  makeNicePdf
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
@@ -25,23 +25,7 @@ import json
 import datetime
 
 
-class IndexView(generic.ListView):
-    template_name = 'polls/index.html'
-    context_object_name = 'latest_question_list'
 
-    def get_queryset(self):
-        """Return the last five published questions."""
-        return Question.objects.order_by('-pub_date')[:5]
-
-
-class DetailView(generic.DetailView):
-    model = Question
-    template_name = 'polls/detail.html'
-
-
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = 'polls/results.html'
 
 
 @login_required
@@ -87,68 +71,76 @@ def home(request):
     return render(request, 'mysite/home.html', context)
 
 
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
-
-
 def exercise_view(request):
     return render(request, 'polls/primer.html')
 
 
-def get_exercise(request):
-    fortune_wheel = 1
+def create_test(request):
+    apparatus = TrainingApparatus.objects.last()
+    user = User.objects.get(pk=request.user.id)
+    test = TrainingTest(apparatus=apparatus, user=user)
 
-    if fortune_wheel == 1:
+    for i in range(1,apparatus.exercises_amount):
         ch = (randint(2,9))
         chh = (randint(11-ch,9))
         znak = '+'
         result = ch+chh
         excess_value = result - 10
-        correct_answers = str(set([str(ch-excess_value) + '+' + str(ch-(ch-excess_value)),
-                                   str(ch-(ch-excess_value)) + '+' + str(ch-excess_value),
-                                   str(chh-excess_value) + '+' + str(chh-(chh-excess_value)),
-                                   str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)])).replace('{','').replace("'",'').replace('}','')
-        print('corans', correct_answers, 'qqq', str(correct_answers))
-        print(type(correct_answers), 'bbbbb')
-    if fortune_wheel == 2:
-        ch = (randint(1, 100))
-        chh = (randint(1, ch))
-        znak = '-'
-        result = ch-chh
-    if fortune_wheel == 3:
-        ch = (randint(1, 10))
-        chh = (randint(1, 10))
-        znak = '*'
-        result = ch*chh
-    if fortune_wheel == 4:
-        chh = (randint(1, 10))
-        ch = (randint(chh, 100))
-        result = round(ch/chh, 2)
-        znak = "/"
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    unsolved_exercise = Exercise(user_id=request.user.id, time_spent=None, correct_answer=result,
-                                 given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh), correct_answers=correct_answers)
-    print(type(unsolved_exercise.correct_answers), 'last')
-    unsolved_exercise.save()
+        exercise_index = i
+        correct_answers = str(set([str(ch-excess_value) + '+' + str(ch-(ch-excess_value))])).replace('{','').replace("'",'').replace('}','')
+        unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=exercise_index,
+                                     given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
+                                     correct_answers=correct_answers)
+
+        unsolved_exercise.save()
+    test.save()
+
+def get_exercise_from_test(request):
+    apparatus = TrainingApparatus.objects.last()
+    if request.exercise_index <= apparatus.exercises_amount:
+        unsolved_exercise = Exercise.objects.filter(test_id=request.test, correct_answer=request.exercise_index)
     return JsonResponse({
         'text': unsolved_exercise.text,
         'pk': unsolved_exercise.pk
     })
+
+
+# def get_exercise(request):
+#     fortune_wheel = 1
+#
+#     if fortune_wheel == 1:
+#         ch = (randint(2,9))
+#         chh = (randint(11-ch,9))
+#         znak = '+'
+#         result = ch+chh
+#         excess_value = result - 10
+#         correct_answers = str(set([str(ch-excess_value) + '+' + str(ch-(ch-excess_value)),
+#                                    str(ch-(ch-excess_value)) + '+' + str(ch-excess_value),
+#                                    str(chh-excess_value) + '+' + str(chh-(chh-excess_value)),
+#                                    str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)])).replace('{','').replace("'",'').replace('}','')
+#     if fortune_wheel == 2:
+#         ch = (randint(1, 100))
+#         chh = (randint(1, ch))
+#         znak = '-'
+#         result = ch-chh
+#     if fortune_wheel == 3:
+#         ch = (randint(1, 10))
+#         chh = (randint(1, 10))
+#         znak = '*'
+#         result = ch*chh
+#     if fortune_wheel == 4:
+#         chh = (randint(1, 10))
+#         ch = (randint(chh, 100))
+#         result = round(ch/chh, 2)
+#         znak = "/"
+#     teacher_check = request.user.groups.filter(name='Учитель').exists()
+#     unsolved_exercise = Exercise(user_id=request.user.id, time_spent=None, correct_answer=result,
+#                                  given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh), correct_answers=correct_answers)
+#     unsolved_exercise.save()
+#     return JsonResponse({
+#         'text': unsolved_exercise.text,
+#         'pk': unsolved_exercise.pk
+#     })
 
 
 def check_answer(request):
@@ -176,8 +168,7 @@ def check_answer(request):
 
 
 def get_history(request):
-    print(request.user.pk)
-    solved_exercises = Exercise.objects.filter(user_id=request.user.id)
+    solved_exercises = Exercise.objects.filter(test_id=request.test_id)
     history = []
     for exercise in solved_exercises:
         solved_exercise = {

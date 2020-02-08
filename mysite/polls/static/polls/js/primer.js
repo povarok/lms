@@ -16,6 +16,7 @@ function getPrimer() {
             console.log(r);
             $('#exerciseText').text(r.text);
             $('#answer').data('pk', r.pk);
+            d.getElementById('answer').value = "";
             if (startTime === undefined) {
                 startTime = new Date().getTime();
                 timerLoop();
