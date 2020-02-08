@@ -3,7 +3,7 @@
 {% block title %}LMS{% endblock %}
 {% block import %}
 {% load static %}
-
+    <link rel="stylesheet" href="{% static 'polls/css/results.css' %}">
     <script type="text/javascript" src="{% static 'polls/js/lms.js' %}"></script>
 {% endblock %}
 {% block name %}Результаты тестирования{% endblock %}
@@ -12,9 +12,39 @@
     <script>
         const CRSF_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     </script>
-{{time_spent}}
-{{correct_answers}}
-{{correct_answers_percentage}}
-{{grade}}
+
+<div class="info-block">
+    <div class="card">
+        <div class="card--title">
+            Затраченное время
+            <div class="underline"></div>
+        </div>
+
+        <div class="card--value">{{time_spent}}</div>
+
+    </div>
+    <div class="card">
+        <div class="card--title">
+            Количество верных ответов
+            <div class="underline"></div>
+        </div>
+        <div class="card--value">{{correct_answers}}</div>
+    </div>
+    <div class="card">
+        <div class="card--title">
+            Процент верных ответов
+            <div class="underline"></div>
+        </div>
+        <div class="card--value">{{correct_answers_percentage}}</div>
+    </div>
+    <div class="card">
+        <div class="card--title">
+            Оценка
+            <div class="underline"></div>
+        </div>
+        <div class="card--value">{{grade}}</div>
+    </div>
+</div>
+
 
 {% endblock %}
