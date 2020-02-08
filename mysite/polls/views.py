@@ -14,7 +14,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.views.generic.base import View
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from reportlab.platypus import Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfbase import pdfmetrics
@@ -78,32 +78,67 @@ def exercise_view(request):
 def create_test(request):
     apparatus = TrainingApparatus.objects.last()
     user = User.objects.get(pk=request.user.id)
-    test = TrainingTest(apparatus=apparatus, user=user)
-
-    for i in range(1,apparatus.exercises_amount):
-        ch = (randint(2,9))
-        chh = (randint(11-ch,9))
+    test = TrainingTest(apparatus=apparatus, user=user, grade=0)
+    test.save()
+    unsolved_exercises = []
+    for i in range(1, apparatus.exercises_amount+1):
+        ch = (randint(2, 9))
+        chh = (randint(11-ch, 9))
         znak = '+'
         result = ch+chh
         excess_value = result - 10
         exercise_index = i
-        correct_answers = str(set([str(ch-excess_value) + '+' + str(ch-(ch-excess_value))])).replace('{','').replace("'",'').replace('}','')
-        unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=exercise_index,
+        correct_answer = (str(ch-(ch-excess_value)) + '+' + str(ch-excess_value)).replace("'", '')
+        unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
                                      given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
-                                     correct_answers=correct_answers)
-
+                                     exercise_index=exercise_index)
         unsolved_exercise.save()
-    test.save()
-
-def get_exercise_from_test(request):
-    apparatus = TrainingApparatus.objects.last()
-    if request.exercise_index <= apparatus.exercises_amount:
-        unsolved_exercise = Exercise.objects.filter(test_id=request.test, correct_answer=request.exercise_index)
+        unsolved_exercises.append(unsolved_exercise.pk)
     return JsonResponse({
-        'text': unsolved_exercise.text,
-        'pk': unsolved_exercise.pk
+        'status': 'ok'
     })
 
+
+def get_exercise(request):
+    apparatus = TrainingApparatus.objects.last()
+    test = TrainingTest.objects.filter(user_id=request.user.id).last()
+    exercise_index = test.solved_exercises + 1
+    if exercise_index <= apparatus.exercises_amount:
+        unsolved_exercise = Exercise.objects.filter(test_id=test, exercise_index=exercise_index)[0]
+    else:
+        return JsonResponse({
+            "url": "/end_test/"
+        })
+    return JsonResponse({
+        'text': unsolved_exercise.text,
+        'pk': unsolved_exercise.pk,
+        'test_id': unsolved_exercise.test_id.id,
+        'exercise_index': unsolved_exercise.exercise_index
+    })
+
+def end_test(request):
+    test = TrainingTest.objects.filter(user_id=request.user.id).last()
+    time_spent = test.time_spent
+    correct_answers = test.correct_answers
+    exercises_amount = test.apparatus.exercises_amount
+    correct_answers_percentage = correct_answers/exercises_amount*100
+    if correct_answers_percentage >= test.apparatus.perfect:
+        grade = 5
+    elif correct_answers_percentage >= test.apparatus.good:
+        grade = 4
+    elif correct_answers_percentage >= test.apparatus.satisfactory:
+        grade = 3
+    else:
+        grade = 2
+    test.grade = grade
+    test.save()
+    context = {
+        "time_spent": time_spent,
+        "correct_answers": correct_answers,
+        "correct_answers_percentage": str(correct_answers_percentage) + "%",
+        "grade": grade,
+    }
+    return render(request, 'mysite/results.html', context)
 
 # def get_exercise(request):
 #     fortune_wheel = 1
@@ -134,7 +169,7 @@ def get_exercise_from_test(request):
 #         result = round(ch/chh, 2)
 #         znak = "/"
 #     teacher_check = request.user.groups.filter(name='Учитель').exists()
-#     unsolved_exercise = Exercise(user_id=request.user.id, time_spent=None, correct_answer=result,
+#     unsolved_exercise = Exercise(test_id=request.user.id, time_spent=None, correct_answer=result,
 #                                  given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh), correct_answers=correct_answers)
 #     unsolved_exercise.save()
 #     return JsonResponse({
@@ -144,38 +179,37 @@ def get_exercise_from_test(request):
 
 
 def check_answer(request):
-    print(request.user.pk)
     req = json.loads(request.body)
-    print(req)
     exercise = Exercise.objects.get(pk=req['pk'])
     exercise.given_answer = req['value']
-    print('req', req['value'])
+    exercise.exercise_index = req['exercise_index']
+    test = TrainingTest.objects.filter(user_id=request.user.id).last()
+    test.solved_exercises += 1
     exercise.time_spent = datetime.datetime.fromtimestamp(req['time_spent'])
-    correct_answers = exercise.correct_answers.split(', ')
-    #is_correct = exercise.given_answer == float(exercise.correct_answer)
-    if str(exercise.given_answer) != '' and str(exercise.given_answer) in correct_answers:
+    if str(exercise.given_answer) != '' and exercise.given_answer == exercise.correct_answer:
         is_correct = True
+        test.correct_answers += 1
     else:
         is_correct = False
-    print(is_correct, str(exercise.given_answer), correct_answers)
+    print(is_correct, str(exercise.given_answer), exercise.correct_answer)
     exercise.answer_is_correct = is_correct
     exercise.save()
-
-
+    test.save()
     return JsonResponse({
         'is_correct': is_correct
     }, safe=False)
 
 
 def get_history(request):
-    solved_exercises = Exercise.objects.filter(test_id=request.test_id)
+    req = json.loads(request.body)
+    solved_exercises = Exercise.objects.filter(test_id=req['test_id'], time_spent__isnull=False)
     history = []
     for exercise in solved_exercises:
         solved_exercise = {
             'text': exercise.text,
             'pk': exercise.pk,
             'is_correct': exercise.answer_is_correct,
-            'correct_answer': exercise.correct_answers,
+            'correct_answer': exercise.correct_answer,
             'given_answer': exercise.given_answer,
             'time_spent': exercise.time_spent
         }
@@ -189,7 +223,6 @@ def get_history(request):
 def practice(request):
     check = ''
     x = templates(check)
-    print (x[1])
     idNumber = 3
     teacher_check = request.user.groups.filter(name='Учитель').exists()
     l = SavedPrimer(user = request.user.id, idNumber = idNumber, value = x[1] )

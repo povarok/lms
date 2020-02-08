@@ -33,7 +33,7 @@ from reportlab.pdfgen import canvas
 # Create your models here.
 class ExerciseTypes(models.Model):
     name = models.CharField(verbose_name="Тип примера", max_length=200)
-    description = models.TextField(verbose_name="Описание")
+    description = models.TextField(verbose_name="Описание", blank=True, null=True)
 
 class Grades(models.Model):
     perfect = models.PositiveIntegerField(verbose_name="Отлично")
@@ -44,6 +44,7 @@ class Grades(models.Model):
 
 class TrainingApparatus(Grades):
     name = models.CharField(verbose_name="Название тренажера", max_length=200)
+    description = models.TextField(max_length=1000, blank=True, null=True)
     exercises_type = models.ForeignKey(ExerciseTypes, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
     exercises_amount = models.PositiveIntegerField(default=0)
     allotted_time = models.TimeField(auto_now=False, auto_now_add=False)
@@ -54,6 +55,7 @@ class TrainingTest(models.Model):
     grade = models.PositiveIntegerField()
     solved_exercises = models.PositiveIntegerField(default=0)
     correct_answers = models.PositiveIntegerField(default=0)
+    time_start = models.TimeField(auto_now=False, auto_now_add=True, blank=True, null=True)
     time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
 
 class Exercise(models.Model):
@@ -64,7 +66,7 @@ class Exercise(models.Model):
     given_answer = models.CharField(max_length=200)
     answer_is_correct = models.BooleanField()
     text = models.TextField(max_length=1000)
-    correct_answers = models.CharField(max_length=200, blank=True, null=True)
+    exercise_index = models.PositiveIntegerField(default=0)
 
 
 

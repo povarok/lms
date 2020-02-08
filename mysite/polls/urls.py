@@ -15,10 +15,11 @@ urlpatterns = [
 
     # ex: /polls/primer
     url(r'^primer$', views.exercise_view, name='primer'),
-    path('api_get_exercise_from_test/', views.get_exercise_from_test, name='get_exercise_from_test'),
+    path('api_create_test/', views.create_test, name='create_test'),
+    path('api_get_exercise/', views.get_exercise, name='get_exercise'),
     path('api_check_answer/', views.check_answer, name='check_answer'),
     path('api_get_history/', views.get_history, name='get_history'),
-    #path('api_get_test/')
+    path('end_test/', views.end_test, name='end_test'),
     url(r'^temp_save$', views.temp_save, name='temp_save'),
 
 

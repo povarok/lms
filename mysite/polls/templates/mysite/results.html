@@ -1,0 +1,20 @@
+{% extends "mysite/base.html" %}
+
+{% block title %}LMS{% endblock %}
+{% block import %}
+{% load static %}
+
+    <script type="text/javascript" src="{% static 'polls/js/lms.js' %}"></script>
+{% endblock %}
+{% block name %}Результаты тестирования{% endblock %}
+{% block content %}
+{% csrf_token %}
+    <script>
+        const CRSF_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    </script>
+{{time_spent}}
+{{correct_answers}}
+{{correct_answers_percentage}}
+{{grade}}
+
+{% endblock %}

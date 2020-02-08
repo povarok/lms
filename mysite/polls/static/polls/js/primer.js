@@ -13,7 +13,12 @@ function getPrimer() {
         complete: function() {
         },
         success: function (r) {
+            if (r.url) {
+            window.location.href = r.url;
+            }
             console.log(r);
+            window.test_id = r.test_id;
+            window.exercise_index = r.exercise_index;
             $('#exerciseText').text(r.text);
             $('#answer').data('pk', r.pk);
             d.getElementById('answer').value = "";
@@ -31,11 +36,13 @@ function getPrimer() {
     });
 }
 
+
 function checkAnswer() {
 
     const data = {
         pk: parseInt($('#answer').data('pk')),
         value: $('#answer').val(),
+        exercise_index: window.exercise_index,
         time_spent: (new Date().getTime() - startTime)/1000
     };
     if (data.value == '') {
@@ -66,17 +73,24 @@ function checkAnswer() {
 }
 
 function getAnswersHistory() {
+    var data = {
+    test_id: window.test_id,
+    exercise_index: window.exercise_index
+    }
     $.ajax({
-        method: 'GET',
+        method: 'POST',
         url: API_GET_HISTORY,
+        headers: {
+            "X-CSRFToken":CRSF_token
+        },
         contentType: 'application/json',
         crossDomain: true,
+        data: JSON.stringify(data),
         beforeSend: function() {
         },
         complete: function() {
         },
         success: function (r) {
-            console.log(r);
             if (r.length === 0) {
                 $('#noHistoryMessage').show();
                 $('#answersHistory').hide();
