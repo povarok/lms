@@ -107,7 +107,8 @@ def get_exercise(request):
         unsolved_exercise = Exercise.objects.filter(test_id=test, exercise_index=exercise_index)[0]
     else:
         return JsonResponse({
-            "url": "/end_test/"
+            "url": "/end_test/",
+            "test_id": test.id
         })
     return JsonResponse({
         'text': unsolved_exercise.text,
@@ -137,6 +138,46 @@ def end_test(request):
         "correct_answers": correct_answers,
         "correct_answers_percentage": str(correct_answers_percentage) + "%",
         "grade": grade,
+    }
+    return render(request, 'mysite/results.html', context)
+
+def end_test_id(request, test_id):
+    test = TrainingTest.objects.get(id=int(test_id))
+    time_spent = test.time_spent
+    correct_answers = test.correct_answers
+    exercises_amount = test.apparatus.exercises_amount
+    correct_answers_percentage = correct_answers/exercises_amount*100
+    if correct_answers_percentage >= test.apparatus.perfect:
+        grade = 5
+    elif correct_answers_percentage >= test.apparatus.good:
+        grade = 4
+    elif correct_answers_percentage >= test.apparatus.satisfactory:
+        grade = 3
+    else:
+        grade = 2
+    test.grade = grade
+    test.save()
+
+    solved_exercises = Exercise.objects.filter(test_id=int(test_id), time_spent__isnull=False)
+    history = []
+    for exercise in solved_exercises:
+        solved_exercise = {
+            'text': exercise.text,
+            'pk': exercise.pk,
+            'is_correct': exercise.answer_is_correct,
+            'correct_answer': exercise.correct_answer,
+            'given_answer': exercise.given_answer,
+            'time_spent': exercise.time_spent
+        }
+        history.append(solved_exercise)
+
+
+    context = {
+        "time_spent": time_spent,
+        "correct_answers": correct_answers,
+        "correct_answers_percentage": str(correct_answers_percentage) + "%",
+        "grade": grade,
+        "history": history
     }
     return render(request, 'mysite/results.html', context)
 

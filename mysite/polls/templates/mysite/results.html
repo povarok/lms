@@ -46,7 +46,36 @@
     </div>
 </div>
 
-
+<div class="card big">
+    <table class="table table-striped">
+    <thead >
+        <tr>
+            <th scope="col">Пример</th>
+            <th scope="col">Данный ответ</th>
+            <th scope="col">Правильные ответы</th>
+            <th scope="col">Время решения</th>
+            <th scope="col">Проверка</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for ex in history %}
+        <tr>
+            <td>{{ex.text}}</td>
+            <td>{{ex.given_answer}}</td>
+            <td>{{ex.correct_answer}}</td>
+            <td>{{ex.time_spent}}</td>
+            <td>
+                {% if ex.is_correct is true %}
+                    <font color="#00cc00" size="5"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
+                {% else %}
+                    <font color="#ff5050" size="5"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
 
 
 {% endblock %}

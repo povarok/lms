@@ -14,7 +14,8 @@ function getPrimer() {
         },
         success: function (r) {
             if (r.url) {
-            window.location.href = r.url;
+                const { url, test_id } = r;
+                window.location.href = `    ${url}${test_id}`;
             }
             console.log(r);
             window.test_id = r.test_id;

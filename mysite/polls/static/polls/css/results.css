@@ -20,6 +20,13 @@
     width: 300px;
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
+
+.card.big {
+    width: 80%;
+    min-height: 250px;
+    margin: 0 auto;
+}
+
 .underline {
     height: 3px;
     background-color: #E6E6E6;
