@@ -106,6 +106,9 @@ def get_exercise(request):
     if exercise_index <= apparatus.exercises_amount:
         unsolved_exercise = Exercise.objects.filter(test_id=test, exercise_index=exercise_index)[0]
     else:
+        time_spent = datetime.datetime.combine(datetime.date.today(), datetime.datetime.now().time()) - datetime.datetime.combine(datetime.date.today(), test.time_start)
+        test.time_spent = (time_spent + datetime.datetime(1, 1, 1, 0, 0, 0)).time()
+        test.save()
         return JsonResponse({
             "url": "/end_test/",
             "test_id": test.id
@@ -119,7 +122,6 @@ def get_exercise(request):
 
 def end_test(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    time_spent = test.time_spent
     correct_answers = test.correct_answers
     exercises_amount = test.apparatus.exercises_amount
     correct_answers_percentage = correct_answers/exercises_amount*100
@@ -134,7 +136,7 @@ def end_test(request):
     test.grade = grade
     test.save()
     context = {
-        "time_spent": time_spent,
+        "time_spent": test.time_spent,
         "correct_answers": correct_answers,
         "correct_answers_percentage": str(correct_answers_percentage) + "%",
         "grade": grade,
@@ -143,7 +145,6 @@ def end_test(request):
 
 def end_test_id(request, test_id):
     test = TrainingTest.objects.get(id=int(test_id))
-    time_spent = test.time_spent
     correct_answers = test.correct_answers
     exercises_amount = test.apparatus.exercises_amount
     correct_answers_percentage = correct_answers/exercises_amount*100
@@ -160,6 +161,7 @@ def end_test_id(request, test_id):
 
     solved_exercises = Exercise.objects.filter(test_id=int(test_id), time_spent__isnull=False)
     history = []
+    print(test.apparatus.exercises_amount)
     for exercise in solved_exercises:
         solved_exercise = {
             'text': exercise.text,
@@ -173,8 +175,9 @@ def end_test_id(request, test_id):
 
 
     context = {
-        "time_spent": time_spent,
+        "time_spent": test.time_spent,
         "correct_answers": correct_answers,
+        'exercises_amount': test.apparatus.exercises_amount,
         "correct_answers_percentage": str(correct_answers_percentage) + "%",
         "grade": grade,
         "history": history
@@ -243,18 +246,21 @@ def check_answer(request):
 
 def get_history(request):
     req = json.loads(request.body)
-    solved_exercises = Exercise.objects.filter(test_id=req['test_id'], time_spent__isnull=False)
     history = []
-    for exercise in solved_exercises:
-        solved_exercise = {
-            'text': exercise.text,
-            'pk': exercise.pk,
-            'is_correct': exercise.answer_is_correct,
-            'correct_answer': exercise.correct_answer,
-            'given_answer': exercise.given_answer,
-            'time_spent': exercise.time_spent
-        }
-        history.append(solved_exercise)
+    try:
+        solved_exercises = Exercise.objects.filter(test_id=req['test_id'], time_spent__isnull=False)
+        for exercise in solved_exercises:
+            solved_exercise = {
+                'text': exercise.text,
+                'pk': exercise.pk,
+                'is_correct': exercise.answer_is_correct,
+                'correct_answer': exercise.correct_answer,
+                'given_answer': exercise.given_answer,
+                'time_spent': exercise.time_spent
+            }
+            history.append(solved_exercise)
+    except KeyError:
+        pass
     return JsonResponse(
         history, safe=False
     )

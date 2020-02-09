@@ -3,6 +3,7 @@
 const d = document;
 
 function getPrimer() {
+    $('#answer').focus()
     $.ajax({
         method: 'GET',
         url: API_GET_EXERCISE,
@@ -38,8 +39,8 @@ function getPrimer() {
 }
 
 
-function checkAnswer() {
 
+function checkAnswer() {
     const data = {
         pk: parseInt($('#answer').data('pk')),
         value: $('#answer').val(),
@@ -120,6 +121,7 @@ function getAnswersHistory() {
         console.log(`[AJAX] error ${API_GET_HISTORY}`, err);
     });
 }
+
 
 let time = 0;
 let startTime;
@@ -228,5 +230,20 @@ function init() {
 $(d).ready(function () {
     console.log('primer ready');
     init();
+    var input = document.getElementById("answer");
+    var button = document.getElementById("checkAnswer");
+    console.log(input)
+    console.log(button)
+
+    // Execute a function when the user releases a key on the keyboard
+    input.addEventListener("keyup", function(event) {
+      // Number 13 is the "Enter" key on the keyboard
+      if (event.keyCode === 13) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        button.click();
+      }
+    });
 
 });

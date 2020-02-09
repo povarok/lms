@@ -15,34 +15,44 @@
 
 <div class="info-block">
     <div class="card">
-        <div class="card--title">
-            Затраченное время
-            <div class="underline"></div>
-        </div>
-
-        <div class="card--value">{{time_spent}}</div>
-
+        <table class="table">
+            <thead >
+            <th>Затраченное время</th>
+            </thead>
+            <tbody>
+            <td>{{time_spent|time:"H:i:s"}}</td>
+            </tbody>
+        </table>
     </div>
     <div class="card">
-        <div class="card--title">
-            Количество верных ответов
-            <div class="underline"></div>
-        </div>
-        <div class="card--value">{{correct_answers}}</div>
+        <table class="table">
+            <thead >
+            <th>Количество верных ответов</th>
+            </thead>
+            <tbody>
+            <td>{{correct_answers}}/{{exercises_amount}}</td>
+            </tbody>
+        </table>
     </div>
     <div class="card">
-        <div class="card--title">
-            Процент верных ответов
-            <div class="underline"></div>
-        </div>
-        <div class="card--value">{{correct_answers_percentage}}</div>
+        <table class="table">
+            <thead >
+            <th>Процент верных ответов</th>
+            </thead>
+            <tbody>
+            <td>{{correct_answers_percentage}}</td>
+            </tbody>
+        </table>
     </div>
     <div class="card">
-        <div class="card--title">
-            Оценка
-            <div class="underline"></div>
-        </div>
-        <div class="card--value">{{grade}}</div>
+        <table class="table">
+            <thead >
+            <th>Оценка</th>
+            </thead>
+            <tbody>
+            <td>{{grade}}</td>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -63,9 +73,9 @@
             <td>{{ex.text}}</td>
             <td>{{ex.given_answer}}</td>
             <td>{{ex.correct_answer}}</td>
-            <td>{{ex.time_spent}}</td>
+            <td>{{ex.time_spent|time:"H:i:s"  }}</td>
             <td>
-                {% if ex.is_correct is true %}
+                {% if ex.is_correct%}
                     <font color="#00cc00" size="5"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>
                 {% else %}
                     <font color="#ff5050" size="5"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>

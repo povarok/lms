@@ -1,4 +1,5 @@
 .no-data-message {
+  vertical-align: middle !important;
   display: none;
 }
 
