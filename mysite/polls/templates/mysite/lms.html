@@ -4,7 +4,7 @@
 {% block import %}
 {% load static %}
 
-    <script type="text/javascript" src="{% static 'polls/js/lms.js' %}"></script>
+
 {% endblock %}
 {% block name %}Тренажёр{% endblock %}
 {% block content %}
@@ -12,9 +12,17 @@
     <script>
         const CRSF_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
     </script>
-    <p>Ваша задача: в примере <b>а+b</b> разложить первое слагаемое <b>а</b> на два слагаемых <b>с</b> и <b>d (a=c+d)</b> таким образом, чтобы <b>d+b=10</b>. В ответ записать <b>c+d</b>.</p>
-    <p>Пример: <b>9</b>+5 = <b>4+5</b>+5, здесь разложили <b>9=4+5</b>, соответственно в ответ будет записано <b>"4+5"</b>.</p>
-    <p><button class="btn btn-primary btn" id="button-got-it"><h4>Понятно.</button></p>
-
+<select class="form-control" id="apparatus-selector">
+    {% for test in tests %}
+        <option data-description="{{ test.description }}">
+            {{ test.name }}
+        </option>
+    {% endfor %}
+</select>
+<div id="test-description">
+    <span id="description-value"></span>
+</div>
+    <p><button class="btn btn-primary btn" id="button-got-it"><h4>Начать тренировку</h4></button></p>
+    <script type="text/javascript" src="{% static 'polls/js/lms.js' %}"></script>
 
 {% endblock %}

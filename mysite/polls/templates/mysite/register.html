@@ -6,14 +6,20 @@ class="active"
 {% block name %}Регистрация{% endblock %}
 {% block content %}
 
-   <p class="text-center">
-    <form action="" method="post">
-      {% csrf_token %}
-       
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Регистрация</button>
-    
-    </form>
-   </p>
+<p class="text-center">
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="login__block">
+        <div class="input-holder">
+            <input type="text" name="username" id="username" placeholder="Имя пользователя" required
+                   class="form-control"/>
+            <input type="password" name="password1" id="password1" placeholder="Пароль" required class="form-control"/>
+            <input type="password" name="password2" id="password2" placeholder="Повторите пароль" required
+                   class="form-control"/>
+            <button type="submit" class="btn btn-primary btn">Регистрация</button>
+        </div>
+    </div>
+</form>
+</p>
 {% endblock %}
 

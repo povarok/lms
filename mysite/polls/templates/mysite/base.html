@@ -13,57 +13,41 @@
     <link rel="stylesheet" href='{% static "polls/css/base.css" %}'/>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     {% block import %}
     {% load static %}
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    <div class="container-fluid main-container">
-        <div class="col-lg-2 nav__block">
-            <div id="lms-logo">
-                <p><img src='{% static "polls/media/sitsh logo.jpg" %}' class="img-responsive" alt="тут должно быть лого"></p>
-            </div>
-            {% if user.is_authenticated %}
-            <div id="text-navbar">
-                <p class="text-center">Вы вошли как {{ user.username }}</p>
-            </div>
-            {% endif %}
-
-            <ul class="nav nav-pills nav-stacked">
-                {% if teacher_check %}
-                <li {% block home %}{% endblock %} type="submit">
-                    <a class="navbar-link" href="{% url 'polls:home' %}">Главная страница</a>
-                <li {% block temp_make %}{% endblock %} type="submit">
-                    <a href="{% url 'polls:temp_make' %}"> Cоздать варианты заданий</a>
-                </li>
-                <li {% block temp_save %}{% endblock %} type="submit">
-                    <a href="{% url 'polls:temp_save' %}">Создать свой шаблон</a>
-                </li>
-
-                <li {% block train %}{% endblock %} type="submit">
-                    <a href="{% url 'polls:primer' %}">Тренажёр</a>
-                </li>
-
-                <li {% block practice %}{% endblock %} type="submit">
-                    <a href="{% url 'polls:practice' %}">Практика</a>
-                </li>
-                {% endif %}
-
-                {% if user.is_authenticated %}
-                <li type="button">
-                    <a href="/logout/"><i class="icon-search icon-off"> </i> Выход</a>
-                </li>
-                {% endif %}
-            </ul>
-
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header"><a class="navbar-brand"><img src='{% static "polls/media/sitsh-logo.png" %}'</a>
+            <a class="navbar-toggle" data-toggle="collapse" data-target="#mN">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
         </div>
-        <div class="col-lg-8">
+        {% if user.is_authenticated %}
+        <div class="navbar-collapse collapse" id="mN">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a>Вы вошли как {{ user.username }}</a></li>
+                {% if user.username == "admin" %}
+                <li><a href="/admin/">Панель администратора</a></li>
+                {% endif %}
+                <li><a href="/logout/">Выход</a></li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    <div class="container-fluid main-container">
+        <div class="row">
+        <div class="col-lg-12">
                 <p><h1 align="center" >{% block name %}{% endblock %}</h1></p>
-                <br>
                 <br>
                 {% block content %}{% endblock %}
             </div>
+        </div>
     </div>
 </body>
 </html>

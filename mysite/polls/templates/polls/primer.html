@@ -6,62 +6,57 @@ class="active"
 
 {% block import %}
 {% load static %}
-    <link type="text/css" rel="stylesheet" href="{% static 'polls/css/primer.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'polls/css/primer.css' %}">
 
-    <script>
+<script>
         const API_GET_EXERCISE = "{% url 'polls:get_exercise' %}";
         const API_CHECK_ANSWER = "{% url 'polls:check_answer' %}";
         const API_GET_HISTORY = "{% url 'polls:get_history' %}";
 
-    </script>
-    <script type="text/javascript" src="{% static 'polls/js/primer.js' %}"></script>
+
+</script>
+<script type="text/javascript" src="{% static 'polls/js/primer.js' %}"></script>
 {% endblock %}
 {% block content %}
 {% csrf_token %}
-    <script>
+<script>
         const CRSF_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-    </script>
+
+</script>
+<div id="test-description">{{ test_description | safe }}</div>
+<br>
+<br>
 <section class="block__col block--center">
-        <div class="block__row">
-            <span class="primer-text" id="exerciseText"></span>
-            <input id="answer" type="string" placeholder="Введите ответ" size="12"/>
-            <button id="checkAnswer" class="btn btn-primary btn">Ответить</button>
-            <div class="block__row block--center" style="margin-left: 12px;">
-                <i class="fas fa-clock time-icon" title="Время решения примера"></i>
-                <span id="timerValue" class="timer-value"></span>
-                <span id="timerUnit" class="timer-unit"></span>
-            </div>
-
-        </div>
-
-
-{#        {{sl}} {{znak}} {{sll}} =#}
-{##}
-{#        {{ form }}#}
-{#        <input type="submit" value="Ответить" id="input-button"/>#}
-{#        {%if answer_check %}#}
-{#            <font color="green" size="4"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>#}
-{#        {% else %}#}
-{#            <font color="red" size="4"><i class="icon-search glyphicon glyphicon-remove-circle"></i></font>#}
-{#        {% endif %}#}
+    <div class="block__row">
+        <span class="primer-text" id="exerciseText"></span>
+        <input id="answer" type="string" placeholder="Введите ответ" size="12" class="form-control"/>
+        <button id="checkAnswer" class="btn btn-primary btn">Ответить</button>
+    </div>
+<!--    <div class="block__row block&#45;&#45;center">-->
+<!--        <i class="fas fa-clock time-icon" title="Время решения примера"></i>-->
+<!--        <span id="timerValue" class="timer-value"></span>-->
+<!--        <span id="timerUnit" class="timer-unit"></span>-->
+<!--    </div>-->
 
 </section>
-<section class="block__row block--center card" style="margin-top: 40px;">
-    <p id="noHistoryMessage" class="no-data-message">Решенные примеры отсутствуют</p>
-    <table id="answersHistory" class="table table-striped">
-          <thead>
+<section class="block__row block--center card big">
+    <!--    <p id="noHistoryMessage" class="no-data-message">Решенные примеры отсутствуют</p>-->
+    <div class="table-responsive">
+        <table id="answersHistory" class="table table-striped">
+            <thead>
             <tr>
-              <th scope="col">Пример</th>
-              <th scope="col">Данный ответ</th>
-              <th scope="col">Правильные ответы</th>
-              <th scope="col">Время решения</th>
-              <th scope="col">Проверка</th>
+                <th scope="col">Пример</th>
+                <th scope="col">Данный ответ</th>
+                <th scope="col">Правильные ответы</th>
+                <th scope="col">Время решения</th>
+                <th scope="col">Проверка</th>
             </tr>
-          </thead>
-        <tbody id="answersHistoryBody">
+            </thead>
+            <tbody id="answersHistoryBody">
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
 </section>
 

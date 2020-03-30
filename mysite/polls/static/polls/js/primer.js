@@ -94,8 +94,8 @@ function getAnswersHistory() {
         },
         success: function (r) {
             if (r.length === 0) {
-                $('#noHistoryMessage').show();
-                $('#answersHistory').hide();
+//                $('#noHistoryMessage').show();
+//                $('#answersHistory').hide();
             } else {
                 $('#answersHistoryBody').html('');
                 r.reverse().forEach(e=>{
@@ -113,8 +113,8 @@ function getAnswersHistory() {
                    }
 
                 });
-                $('#noHistoryMessage').hide();
-                $('#answersHistory').show();
+//                $('#noHistoryMessage').hide();
+//                $('#answersHistory').show();
             }
         }
     }).fail(function (err) {
@@ -232,8 +232,6 @@ $(d).ready(function () {
     init();
     var input = document.getElementById("answer");
     var button = document.getElementById("checkAnswer");
-    console.log(input)
-    console.log(button)
 
     // Execute a function when the user releases a key on the keyboard
     input.addEventListener("keyup", function(event) {

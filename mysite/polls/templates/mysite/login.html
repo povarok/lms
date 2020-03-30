@@ -12,7 +12,10 @@ class="active"
 
 <form action="" method="post" class="login__block">
 {% csrf_token %}
-{{ form.as_p }}
+<div class="input-holder">
+    <input type="text" name="username" id="username" placeholder="Имя пользователя" required class="form-control"/>
+    <input type="password" name="password" id="password" placeholder="Пароль" required class="form-control"/>
+</div>
 <button type="submit" class="btn btn-primary">Войти</button>
 <a href="/register/"><button type="button" class="btn btn-primary">Регистрация</button></a>
 </form>

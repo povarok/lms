@@ -30,11 +30,10 @@ import datetime
 
 @login_required
 def index(request):
-    # teacher_check = request.user.groups.filter(name='Учитель').exists()
-    # context = {
-    #     'teacher_check': teacher_check
-    # }
-    return render(request, 'mysite/lms.html')
+    context = {
+        'tests': TrainingApparatus.objects.all()
+    }
+    return render(request, 'mysite/lms.html', context)
 
 
 @login_required
@@ -72,38 +71,58 @@ def home(request):
 
 
 def exercise_view(request):
-    return render(request, 'polls/primer.html')
+    test = TrainingTest.objects.filter(user_id=request.user.id).last()
+    context = {
+        'test_description': test.apparatus.description,
+    }
+    return render(request, 'polls/primer.html', context)
 
 
 def create_test(request):
-    apparatus = TrainingApparatus.objects.last()
+    print(request.body)
+    req = json.loads(request.body)
+    apparatus = TrainingApparatus.objects.get(name=req['trainingApparatus'])
     user = User.objects.get(pk=request.user.id)
     test = TrainingTest(apparatus=apparatus, user=user, grade=0)
     test.save()
     unsolved_exercises = []
-    for i in range(1, apparatus.exercises_amount+1):
-        ch = (randint(2, 9))
-        chh = (randint(11-ch, 9))
-        znak = '+'
-        result = ch+chh
-        excess_value = result - 10
-        exercise_index = i
-        correct_answer = (str(ch-(ch-excess_value)) + '+' + str(ch-excess_value)).replace("'", '')
-        unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
-                                     given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
-                                     exercise_index=exercise_index)
-        unsolved_exercise.save()
-        unsolved_exercises.append(unsolved_exercise.pk)
+    if apparatus.name == "Разложение второго слагаемого":
+        for i in range(1, apparatus.exercises_amount+1):
+            ch = (randint(2, 9))
+            chh = (randint(11-ch, 9))
+            znak = '+'
+            result = ch+chh
+            excess_value = result - 10
+            exercise_index = i
+            correct_answer = (str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)).replace("'", '')
+            unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
+                                         given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
+                                         exercise_index=exercise_index)
+            unsolved_exercise.save()
+            unsolved_exercises.append(unsolved_exercise.pk)
+    else:
+        for i in range(1, apparatus.exercises_amount+1):
+            ch = (randint(2, 9))
+            chh = (randint(11-ch, 9))
+            znak = '+'
+            result = ch+chh
+            excess_value = result - 10
+            exercise_index = i
+            correct_answer = (str(ch-(ch-excess_value)) + '+' + str(ch-excess_value)).replace("'", '')
+            unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
+                                         given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
+                                         exercise_index=exercise_index)
+            unsolved_exercise.save()
+            unsolved_exercises.append(unsolved_exercise.pk)
     return JsonResponse({
         'status': 'ok'
     })
 
 
 def get_exercise(request):
-    apparatus = TrainingApparatus.objects.last()
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
     exercise_index = test.solved_exercises + 1
-    if exercise_index <= apparatus.exercises_amount:
+    if exercise_index <= test.apparatus.exercises_amount:
         unsolved_exercise = Exercise.objects.filter(test_id=test, exercise_index=exercise_index)[0]
     else:
         time_spent = datetime.datetime.combine(datetime.date.today(), datetime.datetime.now().time()) - datetime.datetime.combine(datetime.date.today(), test.time_start)
@@ -183,43 +202,6 @@ def end_test_id(request, test_id):
         "history": history
     }
     return render(request, 'mysite/results.html', context)
-
-# def get_exercise(request):
-#     fortune_wheel = 1
-#
-#     if fortune_wheel == 1:
-#         ch = (randint(2,9))
-#         chh = (randint(11-ch,9))
-#         znak = '+'
-#         result = ch+chh
-#         excess_value = result - 10
-#         correct_answers = str(set([str(ch-excess_value) + '+' + str(ch-(ch-excess_value)),
-#                                    str(ch-(ch-excess_value)) + '+' + str(ch-excess_value),
-#                                    str(chh-excess_value) + '+' + str(chh-(chh-excess_value)),
-#                                    str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)])).replace('{','').replace("'",'').replace('}','')
-#     if fortune_wheel == 2:
-#         ch = (randint(1, 100))
-#         chh = (randint(1, ch))
-#         znak = '-'
-#         result = ch-chh
-#     if fortune_wheel == 3:
-#         ch = (randint(1, 10))
-#         chh = (randint(1, 10))
-#         znak = '*'
-#         result = ch*chh
-#     if fortune_wheel == 4:
-#         chh = (randint(1, 10))
-#         ch = (randint(chh, 100))
-#         result = round(ch/chh, 2)
-#         znak = "/"
-#     teacher_check = request.user.groups.filter(name='Учитель').exists()
-#     unsolved_exercise = Exercise(test_id=request.user.id, time_spent=None, correct_answer=result,
-#                                  given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh), correct_answers=correct_answers)
-#     unsolved_exercise.save()
-#     return JsonResponse({
-#         'text': unsolved_exercise.text,
-#         'pk': unsolved_exercise.pk
-#     })
 
 
 def check_answer(request):

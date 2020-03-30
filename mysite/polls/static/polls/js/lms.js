@@ -1,6 +1,8 @@
 function createTest() {
+    var selector = document.getElementById("apparatus-selector");
+    var selectedApparatus = selector.options[selector.selectedIndex].text;
     var data = {
-    trainingApparatus: 1,
+    trainingApparatus: selectedApparatus,
     timeStart: new Date(),
     }
     console.log('data', data)
@@ -25,3 +27,11 @@ function createTest() {
     });
 }
 $(document).on('click', '#button-got-it', createTest)
+
+$(document).on('change', '#apparatus-selector', function (e) {
+    $('#description-value').html($(this).find('option:selected').data('description'))
+});
+
+$(document).ready(function() {
+    $('#description-value').html($('#apparatus-selector').find('option:selected').data('description'))
+});

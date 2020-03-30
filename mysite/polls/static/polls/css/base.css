@@ -1,38 +1,192 @@
 body {
-    background-color:#216894;
+    background-color:#f6f6f6;
+    padding: 0;
+    font-size: 16px;
 }
 
+@media screen and (min-width: 701px) {
+    .form-control {
+        font-size: 16px;
+        width: 100%;
+        margin-bottom: 15px;
+        margin-top: 10px;
+    }
+    .card {
+        width: 250px;
+    }
+    .card.big {
+        width: fit-content;
+    }
+    #apparatus-selector {
+        font-size: 16px;
+        margin-bottom: 22px;
+        max-width: 450px;
+        display: inline;
+    }
+    #test-description {
+        font-size: 16px;
+        margin-bottom: 22px;
+        width: 70%;
+        margin-left: 15%;
+    }
+    .block__row {
+        display: inline-grid;
+        width: 300px;
+    }
+}
+
+.login__block {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.login__block p {
+  text-align: center;
+}
+
+.login__block .btn {
+  width: 180px;
+  margin-bottom: 10px;
+}
+
+@media screen and (max-width: 700px) {
+    .block__row {
+        display: inline-grid;
+    }
+    .col-lg-12 {
+        padding: 0;
+    }
+    .card {
+        width: 100%;
+    }
+    .card.big {
+        width: 100%;
+    }
+    .form-control {
+        font-size: 16px;
+        width: 100%;
+        margin-bottom: 15px;
+        margin-top: 5px;
+    }
+    #apparatus-selector {
+    font-size: 16px;
+    margin-bottom: 22px;
+    width: 100%;
+    }
+    #test-description {
+    font-size: 16px;
+    margin-bottom: 22px;
+    width: 100%;
+    }
+}
+
+/*
 .main-container {
     height: 100vh;
+}
+*/
+.navbar {
+ min-height:100px;
+}
+
+.card.big {
+    min-height: 200px;
+    height: fit-content;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.btn {
+    font-size: 16px;
+}
+
+.nav.navbar-nav.navbar-right {
+ margin-right:0;
+}
+
+.navbar-header
+
+.navbar navbar-default {
+    width: 20%;
+}
+
+.navbar-brand {
+    padding: 0 0 0 15px;
+    height: 80px;
+    margin-top: 10px;
+}
+
+.navbar-brand img {
+    height: 100%;
 }
 
 .nav__block {
     height: 100%;
+    background-color: #fff;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-color: #ddd;
 }
 
+.table-responsive {
+    border: none;
+}
+
+
 #text-navbar{
-    color:white;
+    color:#333;
 }
 
 #lms-logo{
     margin-right: 5%;
 }
 
-.col-lg-8{
+.row {
+    margin: 0 auto;
+    text-align: center;
+    justify-content: center;
+}
+
+.col-lg-12{
     box-sizing: border-box;
-    padding-top: 8%;
-    background-color: white;
+    padding-top: 150px;
+    background-color:#f6f6f6;
     height:100%;
+}
+.input-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
 }
 
 .nav a {
-    color: white;
+    color: #333;
 }
 
 .nav a:hover {
     color: #428bca;
+    transition: 200ms ease;
 }
 
+.card {
+    background: #fff;
+    border-radius: 15px;
+    display: block;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+/*
 .block__row {
     display: flex;
 }
@@ -41,7 +195,7 @@ body {
     display: flex;
     flex-direction: column;
 }
-
+*/
 .block--center {
     justify-content: center;
     align-items: center;
@@ -50,3 +204,9 @@ body {
 .visible {
     display: block;
 }
+
+/*
+.container-fluid{
+    padding: 0;
+}
+*/
