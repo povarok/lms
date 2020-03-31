@@ -35,10 +35,20 @@ class ExerciseTypes(models.Model):
     name = models.CharField(verbose_name="Тип примера", max_length=200)
     description = models.TextField(verbose_name="Описание", blank=True, null=True)
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u'тип упражнения'
+        verbose_name_plural = u'типы упражнения'
+
 class Grades(models.Model):
     perfect = models.PositiveIntegerField(verbose_name="Отлично")
     good = models.PositiveIntegerField(verbose_name="Хорошо")
     satisfactory = models.PositiveIntegerField(verbose_name="Удовлетворительно")
+
+    def __str__(self):
+        return self.name
     class Meta:
         abstract = True
 
@@ -49,6 +59,13 @@ class TrainingApparatus(Grades):
     exercises_amount = models.PositiveIntegerField(default=0)
     allotted_time = models.TimeField(auto_now=False, auto_now_add=False)
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u'тренажер'
+        verbose_name_plural = u'тренажеры'
+
 class TrainingTest(models.Model):
     apparatus = models.ForeignKey(TrainingApparatus, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None, blank=True, null=True)
@@ -57,6 +74,13 @@ class TrainingTest(models.Model):
     correct_answers = models.PositiveIntegerField(default=0)
     time_start = models.TimeField(auto_now=False, auto_now_add=True, blank=True, null=True)
     time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+
+    def __str__(self):
+        return self.apparatus.name + ' - ' + str(self.pk) + ', ' + str(self.user)
+
+    class Meta:
+        verbose_name = u'выполненный тест'
+        verbose_name_plural = u'выполненные тесты'
 
 class Exercise(models.Model):
     type = models.ForeignKey(ExerciseTypes, on_delete=models.CASCADE, default=None, blank=True, null=True)
@@ -67,6 +91,13 @@ class Exercise(models.Model):
     answer_is_correct = models.BooleanField()
     text = models.TextField(max_length=1000)
     exercise_index = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.text + ', ' + self.test_id.apparatus.name + ' - ' + str(self.test_id.pk)
+
+    class Meta:
+        verbose_name = u'упражнение'
+        verbose_name_plural = u'упражнения'
 
 
 
