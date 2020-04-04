@@ -121,6 +121,7 @@ def create_test(request):
 
 def get_exercise(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
+    test.solved_exercises = Exercise.objects.filter(test_id=test, time_spent__isnull=False).count()
     exercise_index = test.solved_exercises + 1
     if exercise_index <= test.apparatus.exercises_amount:
         unsolved_exercise = Exercise.objects.filter(test_id=test, exercise_index=exercise_index)[0]
@@ -164,7 +165,8 @@ def end_test(request):
 
 def end_test_id(request, test_id):
     test = TrainingTest.objects.get(id=int(test_id))
-    correct_answers = test.correct_answers
+    correct_answers = Exercise.objects.filter(test_id=test, answer_is_correct=True).count()
+    solved_exercises = Exercise.objects.filter(test_id=test, given_answer__isnull=False).count()
     exercises_amount = test.apparatus.exercises_amount
     correct_answers_percentage = correct_answers/exercises_amount*100
     if correct_answers_percentage >= test.apparatus.perfect:
@@ -176,6 +178,8 @@ def end_test_id(request, test_id):
     else:
         grade = 2
     test.grade = grade
+    test.solved_exercises = solved_exercises
+    test.correct_answers = correct_answers
     test.save()
 
     solved_exercises = Exercise.objects.filter(test_id=int(test_id), time_spent__isnull=False)
@@ -210,11 +214,9 @@ def check_answer(request):
     exercise.given_answer = req['value']
     exercise.exercise_index = req['exercise_index']
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    test.solved_exercises += 1
     exercise.time_spent = datetime.datetime.fromtimestamp(req['time_spent'])
     if str(exercise.given_answer) != '' and exercise.given_answer == exercise.correct_answer:
         is_correct = True
-        test.correct_answers += 1
     else:
         is_correct = False
     print(is_correct, str(exercise.given_answer), exercise.correct_answer)
