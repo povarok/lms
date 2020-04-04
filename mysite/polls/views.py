@@ -1,31 +1,18 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from random import randint
+from .helper import get_seconds_from_string
 from django.contrib.auth.decorators import login_required
-#from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Primer, TemplateForm, SavedPrimer,  makeNicePdf
 from .models import Exercise, NameForm, TrainingTest, TrainingApparatus
 from django.contrib.auth.models import User
-from polls.models import ExcersiseTemplate, Replacers, NameForm, templates, AnotherForm, ChoiseForm, Exercise, TemplateForm, SavedPrimer,  makeNicePdf
-from django.views.generic.edit import FormView
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout
-from django.views.generic.base import View
+from polls.models import Exercise
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render, redirect
-from reportlab.platypus import Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
 import datetime
-
-
-
 
 
 @login_required
@@ -36,39 +23,15 @@ def index(request):
     return render(request, 'mysite/lms.html', context)
 
 
-@login_required
-def home(request):
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    numberOfTemplatesUser = 0
-    stroka = []
-    check = ''
-
-    x = templates(check)
-    if request.method == 'POST':
-        numberOfTemplates = NameForm(request.POST)
-        if numberOfTemplates.is_valid():
-            numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
-            stroka = []
-            for i in range(int(numberOfTemplatesUser)):
-                y = templates()
-                stroka.append('Название задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
-                print(stroka)
-    else:
-        numberOfTemplates = NameForm()
-
-    context = {
-        'teacher_check': teacher_check,
-        'groups': request.user.groups.all(),
-        'text': x[0],
-        'answer': x[1],
-        'name': x[2],
-        'number': numberOfTemplates,
-        'numberUser': numberOfTemplatesUser,
-        'stroka': stroka
-    }
-
-    return render(request, 'mysite/home.html', context)
-
+def get_allotted_time(request):
+    test = TrainingTest.objects.filter(user_id=request.user.id).last()
+    test.time_spent = (datetime.timedelta(seconds=get_seconds_from_string(test.apparatus.allotted_time)) + datetime.datetime(1, 1, 1, 0, 0, 0)).time()
+    test.save()
+    return JsonResponse({
+        "allotted_time": get_seconds_from_string(test.apparatus.allotted_time),
+        "url": "/end_test/",
+        "test_id": test.id
+    })
 
 def exercise_view(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
@@ -84,6 +47,7 @@ def create_test(request):
     apparatus = TrainingApparatus.objects.get(name=req['trainingApparatus'])
     user = User.objects.get(pk=request.user.id)
     test = TrainingTest(apparatus=apparatus, user=user, grade=0)
+    test.time_start = datetime.datetime.now()
     test.save()
     unsolved_exercises = []
     if apparatus.name == "Разложение второго слагаемого":
@@ -95,7 +59,7 @@ def create_test(request):
             excess_value = result - 10
             exercise_index = i
             correct_answer = (str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)).replace("'", '')
-            unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
+            unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
                                          given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
                                          exercise_index=exercise_index)
             unsolved_exercise.save()
@@ -109,7 +73,7 @@ def create_test(request):
             excess_value = result - 10
             exercise_index = i
             correct_answer = (str(ch-(ch-excess_value)) + '+' + str(ch-excess_value)).replace("'", '')
-            unsolved_exercise = Exercise(test_id=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
+            unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
                                          given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
                                          exercise_index=exercise_index)
             unsolved_exercise.save()
@@ -121,13 +85,32 @@ def create_test(request):
 
 def get_exercise(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    test.solved_exercises = Exercise.objects.filter(test_id=test, time_spent__isnull=False).count()
+    test.solved_exercises = Exercise.objects.filter(test=test, time_spent__isnull=False).count()
     exercise_index = test.solved_exercises + 1
-    if exercise_index <= test.apparatus.exercises_amount:
+    time_spent = datetime.datetime.combine(datetime.date.today(),
+                                           datetime.datetime.now().time()) - datetime.datetime.combine(
+        datetime.date.today(), test.time_start)
+    test.time_spent = (time_spent + datetime.datetime(1, 1, 1, 0, 0, 0)).time()
+    test.save()
+    a = test.time_spent
+    if exercise_index <= test.apparatus.exercises_amount and time_spent.total_seconds() <= get_seconds_from_string(test.apparatus.allotted_time):
         unsolved_exercise = Exercise.objects.filter(test_id=test, exercise_index=exercise_index)[0]
     else:
-        time_spent = datetime.datetime.combine(datetime.date.today(), datetime.datetime.now().time()) - datetime.datetime.combine(datetime.date.today(), test.time_start)
-        test.time_spent = (time_spent + datetime.datetime(1, 1, 1, 0, 0, 0)).time()
+        correct_answers = Exercise.objects.filter(test=test, answer_is_correct=True).count()
+        solved_exercises = Exercise.objects.filter(test=test, given_answer__isnull=False).count()
+        exercises_amount = test.apparatus.exercises_amount
+        correct_answers_percentage = correct_answers / exercises_amount * 100
+        if correct_answers_percentage >= test.apparatus.perfect:
+            grade = 5
+        elif correct_answers_percentage >= test.apparatus.good:
+            grade = 4
+        elif correct_answers_percentage >= test.apparatus.satisfactory:
+            grade = 3
+        else:
+            grade = 2
+        test.grade = grade
+        test.solved_exercises = solved_exercises
+        test.correct_answers = correct_answers
         test.save()
         return JsonResponse({
             "url": "/end_test/",
@@ -136,7 +119,7 @@ def get_exercise(request):
     return JsonResponse({
         'text': unsolved_exercise.text,
         'pk': unsolved_exercise.pk,
-        'test_id': unsolved_exercise.test_id.id,
+        'test_id': unsolved_exercise.test.id,
         'exercise_index': unsolved_exercise.exercise_index
     })
 
@@ -165,24 +148,11 @@ def end_test(request):
 
 def end_test_id(request, test_id):
     test = TrainingTest.objects.get(id=int(test_id))
-    correct_answers = Exercise.objects.filter(test_id=test, answer_is_correct=True).count()
-    solved_exercises = Exercise.objects.filter(test_id=test, given_answer__isnull=False).count()
-    exercises_amount = test.apparatus.exercises_amount
-    correct_answers_percentage = correct_answers/exercises_amount*100
-    if correct_answers_percentage >= test.apparatus.perfect:
-        grade = 5
-    elif correct_answers_percentage >= test.apparatus.good:
-        grade = 4
-    elif correct_answers_percentage >= test.apparatus.satisfactory:
-        grade = 3
-    else:
-        grade = 2
-    test.grade = grade
-    test.solved_exercises = solved_exercises
-    test.correct_answers = correct_answers
-    test.save()
+    correct_answers = test.exercise_set.filter(test=test, answer_is_correct=True).count()
+    correct_answers_percentage = correct_answers / test.apparatus.exercises_amount * 100
 
-    solved_exercises = Exercise.objects.filter(test_id=int(test_id), time_spent__isnull=False)
+
+    solved_exercises = Exercise.objects.filter(test=int(test_id), time_spent__isnull=False)
     history = []
     print(test.apparatus.exercises_amount)
     for exercise in solved_exercises:
@@ -202,7 +172,7 @@ def end_test_id(request, test_id):
         "correct_answers": correct_answers,
         'exercises_amount': test.apparatus.exercises_amount,
         "correct_answers_percentage": str(correct_answers_percentage) + "%",
-        "grade": grade,
+        "grade": test.grade,
         "history": history
     }
     return render(request, 'mysite/results.html', context)
@@ -232,7 +202,7 @@ def get_history(request):
     req = json.loads(request.body)
     history = []
     try:
-        solved_exercises = Exercise.objects.filter(test_id=req['test_id'], time_spent__isnull=False)
+        solved_exercises = Exercise.objects.filter(test=req['test_id'], time_spent__isnull=False)
         for exercise in solved_exercises:
             solved_exercise = {
                 'text': exercise.text,
@@ -248,139 +218,6 @@ def get_history(request):
     return JsonResponse(
         history, safe=False
     )
-
-
-@login_required
-def practice(request):
-    check = ''
-    x = templates(check)
-    idNumber = 3
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    l = SavedPrimer(user = request.user.id, idNumber = idNumber, value = x[1] )
-
-    if request.method == 'POST':
-        form = AnotherForm(request.POST)
-
-
-        if form.is_valid():
-            form = form.cleaned_data['field']
-
-
-           # summa = SavedPrimer.objects.last()
-
-            if (str(SavedPrimer.objects.filter(user=request.user.id,idNumber=idNumber ).first().value) == str(form)):
-                answerCheck = True
-                print ('БД: ',SavedPrimer.objects.filter(user=request.user.id,idNumber=idNumber ).first().value,'введенное', form)
-            else:
-                answerCheck = False
-                print ('БД: ',SavedPrimer.objects.filter(user=request.user.id,idNumber=idNumber ).first().value,'введенное', form)
-    else:
-        form = AnotherForm()
-        answerCheck = 'Вы еще не ввели ответ'
-
-    form = AnotherForm()
-    SavedPrimer.objects.filter(user=request.user.id).all().delete()
-    if request.user.id!=None:
-        l.save()
-    return render(request, 'mysite/practice.html',{'teacher_check' : teacher_check, 'answerCheck' : answerCheck, 'temp_text' : x[0],
-                                                   'form' : form, 'answer': x[1]})
-
-
-@login_required
-def temp_save(request):
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    if request.user.groups.filter(name='Учитель').exists():
-        if request.method == 'POST':
-            form = TemplateForm(request.POST)
-            if form.is_valid():
-                form.save()
-        else:
-            form = TemplateForm()
-
-        return render(request, 'mysite/temp_save.html',{'templateForm' : form, 'teacher_check' : teacher_check})
-    else:
-        raise Http404("Вы не учитель")
-
-
-@login_required
-def temp_make(request):
-    numberOfTemplatesUser = 0
-    numberOfTasks = 0
-    stroka = []
-    check = ''
-    test = ExcersiseTemplate.objects.all()
-    print (numberOfTasks)
-    form3 = ChoiseForm(request.POST)
-    teacher_check = request.user.groups.filter(name='Учитель').exists()
-    if request.method == 'POST':
-        numberOfTemplates = NameForm(request.POST)
-        #print (numberOfTemplates)
-        # form2 = AnotherForm(request.POST)
-        #form2 = NameForm(request.POST)
-        #print ('form2',form2)
-        form3 = ChoiseForm(request.POST)
-        # if form2.is_valid():
-        #     numberOfTasks = form2.cleaned_data['fieldn']
-        #     print (numberOfTasks)
-        if form3.is_valid():
-            # print ('check1',check)
-            check = form3.cleaned_data['field']
-            if check == None:
-                check = ''
-            # print ('check2',check)
-
-        if numberOfTemplates.is_valid():
-            numberOfTemplatesUser = numberOfTemplates.cleaned_data['your_name']
-            numberOfTasks = numberOfTemplates.cleaned_data['fieldn']
-            # print ('sd', numberOfTemplatesUser)
-            if numberOfTemplatesUser == None:
-                numberOfTemplatesUser = 0
-            PDFstroka = []
-            stroka = []
-            styles = getSampleStyleSheet()
-            print (styles)
-            pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
-            for i in range(int(numberOfTemplatesUser)):
-                stroka.append('Вариант '+str(i+1))
-                PDFstroka.append(Paragraph('<font name="FreeSans">Вариант '+str(i+1)+'</font>',styles["title"]))
-
-                for k in range (int(numberOfTasks)):
-                    y = templates(check)
-
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача номер '+str(k+1)+'</font>',styles["Normal"] ))
-                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
-
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Название задачи:</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[2])+ '</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
-
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Задача:</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[0])+'</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
-
-                    PDFstroka.append(Paragraph('<font name="FreeSans">Ответ:</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans">'+str(y[1])+'</font>',styles["Normal"]))
-                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
-
-                    PDFstroka.append(Paragraph('<font name="FreeSans">_________________________________________________________________</font>',styles["Normal"] ))
-                    PDFstroka.append(Paragraph('<font name="FreeSans"> </font>',styles["Normal"] ))
-
-
-                    stroka.append('Задача номер '+str(k+1)+'\nНазвание задачи:\n' + str(y[2])+'\n \n' + 'Задача:\n' + str(y[0])+'\n \n' + 'Ответ:\n'+str(y[1])+'\n')
-                    # print (stroka)
-            return makeNicePdf(request,PDFstroka)
-
-
-    else:
-        numberOfTemplates = NameForm()
-        form2 = AnotherForm(request.POST)
-        numberOfTemplatesUser = 0
-        numberOfTasks = 0
-
-
-    return render(request, 'mysite/temp_make.html',{'teacher_check':teacher_check,
-     'number' : numberOfTemplates, 'numberUser' : numberOfTemplatesUser, 'stroka' : stroka,  'check': check, 'test' : test, 'form3': form3})
-
 
 @login_required
 def home1(request):

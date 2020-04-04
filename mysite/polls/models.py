@@ -53,11 +53,12 @@ class Grades(models.Model):
         abstract = True
 
 class TrainingApparatus(Grades):
-    name = models.CharField(verbose_name="Название тренажера", max_length=200)
-    description = models.TextField(max_length=1000, blank=True, null=True)
-    exercises_type = models.ForeignKey(ExerciseTypes, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
-    exercises_amount = models.PositiveIntegerField(default=0)
-    allotted_time = models.TimeField(auto_now=False, auto_now_add=False)
+    name = models.CharField(verbose_name=u"Название тренажера", max_length=200)
+    description = models.TextField(verbose_name="Описание", max_length=1000, blank=True, null=True)
+    exercises_type = models.ForeignKey(ExerciseTypes, verbose_name=u"Тип(ы) примеров", on_delete=models.SET_DEFAULT,
+                                       default=None, blank=True, null=True, help_text=u"В РАЗРАБОТКЕ")
+    exercises_amount = models.PositiveIntegerField(verbose_name=u"Количество примеров", default=0)
+    allotted_time = models.CharField(verbose_name=u"Время на выполнение", max_length=9, default="00:00:00", help_text=u'Формат - "00:00:00"')
 
     def __str__(self):
         return self.name
@@ -67,13 +68,14 @@ class TrainingApparatus(Grades):
         verbose_name_plural = u'тренажеры'
 
 class TrainingTest(models.Model):
-    apparatus = models.ForeignKey(TrainingApparatus, on_delete=models.SET_DEFAULT, default=None, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None, blank=True, null=True)
-    grade = models.PositiveIntegerField()
-    solved_exercises = models.PositiveIntegerField(default=0)
-    correct_answers = models.PositiveIntegerField(default=0)
-    time_start = models.TimeField(auto_now=False, auto_now_add=True, blank=True, null=True)
-    time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    apparatus = models.ForeignKey(TrainingApparatus, verbose_name=u"Тип тренажера", on_delete=models.SET_DEFAULT,
+                                  default=None, blank=True, null=True)
+    user = models.ForeignKey(User, verbose_name=u"Пользователь", on_delete=models.CASCADE, default=None, blank=True, null=True)
+    grade = models.PositiveIntegerField(verbose_name=u"Оценка")
+    solved_exercises = models.PositiveIntegerField(verbose_name=u"Количество решенных примеров", default=0)
+    correct_answers = models.PositiveIntegerField(verbose_name=u"Количество верных ответов", default=0)
+    time_start = models.TimeField(verbose_name=u"Время начала тестирования", auto_now=False, auto_now_add=True, blank=True, null=True)
+    time_spent = models.TimeField(verbose_name=u"Потраченное время на решение", auto_now=False, auto_now_add=False, blank=True, null=True)
 
     def __str__(self):
         return self.apparatus.name + ' - ' + str(self.pk) + ', ' + str(self.user)
@@ -83,17 +85,17 @@ class TrainingTest(models.Model):
         verbose_name_plural = u'выполненные тесты'
 
 class Exercise(models.Model):
-    type = models.ForeignKey(ExerciseTypes, on_delete=models.CASCADE, default=None, blank=True, null=True)
-    test_id = models.ForeignKey(TrainingTest, on_delete=models.CASCADE, default=None, blank=True, null=True)
-    time_spent = models.TimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
-    correct_answer = models.CharField(max_length=200)
-    given_answer = models.CharField(max_length=200)
-    answer_is_correct = models.BooleanField()
-    text = models.TextField(max_length=1000)
-    exercise_index = models.PositiveIntegerField(default=0)
+    type = models.ForeignKey(ExerciseTypes, verbose_name=u"Тип упражнения", on_delete=models.CASCADE, default=None, blank=True, null=True)
+    test = models.ForeignKey(TrainingTest, verbose_name=u"Тест", on_delete=models.CASCADE, default=None, blank=True, null=True)
+    time_spent = models.TimeField(verbose_name=u"Потраченное время на решение", auto_now=False, auto_now_add=False, blank=True, null=True)
+    correct_answer = models.CharField(verbose_name=u"Верный ответ", max_length=200)
+    given_answer = models.CharField(verbose_name=u"Данный пользователем ответ", max_length=200)
+    answer_is_correct = models.BooleanField(verbose_name=u"Проверка ответа")
+    text = models.TextField(verbose_name=u"Текст упражнения", max_length=1000)
+    exercise_index = models.PositiveIntegerField(verbose_name=u"Номер упражнения в тесте", default=0)
 
     def __str__(self):
-        return self.text + ', ' + self.test_id.apparatus.name + ' - ' + str(self.test_id.pk)
+        return self.text + ', ' + self.test.apparatus.name + ' - ' + str(self.test.pk)
 
     class Meta:
         verbose_name = u'упражнение'

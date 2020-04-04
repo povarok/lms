@@ -5,7 +5,6 @@ function createTest() {
     trainingApparatus: selectedApparatus,
     timeStart: new Date(),
     }
-    console.log('data', data)
     $.ajax({
         method: 'POST',
         url: '/api_create_test/',

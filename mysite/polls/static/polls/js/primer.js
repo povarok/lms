@@ -38,7 +38,28 @@ function getPrimer() {
     });
 }
 
+function endTest(r) {
+    window.location.href = `    ${r.url}${r.test_id}`;
+}
 
+function getAllottedTime() {
+    $.ajax({
+        method: 'GET',
+        url: API_GET_ALLOTTED_TIME,
+        contentType: 'application/json',
+        crossDomain: true,
+        beforeSend: function() {
+        },
+        complete: function() {
+        },
+        success: function (r) {
+            console.log(r.allotted_time * 1000);
+            setTimeout(endTest, r.allotted_time * 1000, r);
+        }
+    }).fail(function (err) {
+        console.log(`[AJAX] error ${API_GET_ALLOTTED_TIME}`, err);
+    });
+}
 
 function checkAnswer() {
     const data = {
@@ -224,6 +245,7 @@ function attachListeners() {
 function init() {
     attachListeners();
     getPrimer();
+    getAllottedTime();
     getAnswersHistory();
 }
 
@@ -245,3 +267,5 @@ $(d).ready(function () {
     });
 
 });
+
+
