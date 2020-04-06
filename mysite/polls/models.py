@@ -74,8 +74,8 @@ class TrainingTest(models.Model):
     grade = models.PositiveIntegerField(verbose_name=u"Оценка")
     solved_exercises = models.PositiveIntegerField(verbose_name=u"Количество решенных примеров", default=0)
     correct_answers = models.PositiveIntegerField(verbose_name=u"Количество верных ответов", default=0)
-    time_start = models.TimeField(verbose_name=u"Время начала тестирования", auto_now=False, auto_now_add=True, blank=True, null=True)
-    time_spent = models.TimeField(verbose_name=u"Потраченное время на решение", auto_now=False, auto_now_add=False, blank=True, null=True)
+    time_start = models.DateTimeField(verbose_name=u"Время начала тестирования", auto_now=False, auto_now_add=True, blank=True, null=True)
+    time_spent = models.CharField(verbose_name=u"Потраченное время на решение", max_length=10, blank=True, null=True)
 
     def __str__(self):
         return self.apparatus.name + ' - ' + str(self.pk) + ', ' + str(self.user)

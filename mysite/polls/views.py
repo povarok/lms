@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from random import randint
-from .helper import get_seconds_from_string
+from .helper import get_seconds_from_string, get_string_from_seconds
 from django.contrib.auth.decorators import login_required
 from .models import Exercise, NameForm, TrainingTest, TrainingApparatus
 from django.contrib.auth.models import User
@@ -25,8 +25,6 @@ def index(request):
 
 def get_allotted_time(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    test.time_spent = (datetime.timedelta(seconds=get_seconds_from_string(test.apparatus.allotted_time)) + datetime.datetime(1, 1, 1, 0, 0, 0)).time()
-    test.save()
     return JsonResponse({
         "allotted_time": get_seconds_from_string(test.apparatus.allotted_time),
         "url": "/end_test/",
@@ -85,33 +83,14 @@ def create_test(request):
 
 def get_exercise(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    test.solved_exercises = Exercise.objects.filter(test=test, time_spent__isnull=False).count()
+    test.solved_exercises = test.exercise_set.filter(time_spent__isnull=False).count()
     exercise_index = test.solved_exercises + 1
-    time_spent = datetime.datetime.combine(datetime.date.today(),
-                                           datetime.datetime.now().time()) - datetime.datetime.combine(
-        datetime.date.today(), test.time_start)
-    test.time_spent = (time_spent + datetime.datetime(1, 1, 1, 0, 0, 0)).time()
     test.save()
-    a = test.time_spent
-    if exercise_index <= test.apparatus.exercises_amount and time_spent.total_seconds() <= get_seconds_from_string(test.apparatus.allotted_time):
-        unsolved_exercise = Exercise.objects.filter(test_id=test, exercise_index=exercise_index)[0]
+    print('test time spent', get_string_from_seconds(datetime.datetime.now().timestamp() - test.time_start.timestamp()))
+    time_spent = round(datetime.datetime.now().timestamp() - test.time_start.timestamp())
+    if exercise_index <= test.apparatus.exercises_amount and time_spent <= get_seconds_from_string(test.apparatus.allotted_time):
+        unsolved_exercise = test.exercise_set.filter(exercise_index=exercise_index)[0]
     else:
-        correct_answers = Exercise.objects.filter(test=test, answer_is_correct=True).count()
-        solved_exercises = Exercise.objects.filter(test=test, given_answer__isnull=False).count()
-        exercises_amount = test.apparatus.exercises_amount
-        correct_answers_percentage = correct_answers / exercises_amount * 100
-        if correct_answers_percentage >= test.apparatus.perfect:
-            grade = 5
-        elif correct_answers_percentage >= test.apparatus.good:
-            grade = 4
-        elif correct_answers_percentage >= test.apparatus.satisfactory:
-            grade = 3
-        else:
-            grade = 2
-        test.grade = grade
-        test.solved_exercises = solved_exercises
-        test.correct_answers = correct_answers
-        test.save()
         return JsonResponse({
             "url": "/end_test/",
             "test_id": test.id
@@ -123,9 +102,11 @@ def get_exercise(request):
         'exercise_index': unsolved_exercise.exercise_index
     })
 
-def end_test(request):
-    test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    correct_answers = test.correct_answers
+
+def end_test_id(request, test_id):
+    test = TrainingTest.objects.get(id=int(test_id))
+    correct_answers = test.exercise_set.filter(answer_is_correct=True).count()
+    solved_exercises = test.exercise_set.filter(time_spent__isnull=False)
     exercises_amount = test.apparatus.exercises_amount
     correct_answers_percentage = correct_answers/exercises_amount*100
     if correct_answers_percentage >= test.apparatus.perfect:
@@ -137,22 +118,17 @@ def end_test(request):
     else:
         grade = 2
     test.grade = grade
+    test.solved_exercises = solved_exercises.count()
+    test.correct_answers = correct_answers
+    time_spent = round(datetime.datetime.now().timestamp() - test.time_start.timestamp())
+    print ('time spent in seconds', time_spent)
+    # print('asasas', get_string_from_seconds(time_spent))
+    if not test.time_spent:
+        test.time_spent = get_string_from_seconds(time_spent)
+        print('dssdsd', test.time_spent)
     test.save()
-    context = {
-        "time_spent": test.time_spent,
-        "correct_answers": correct_answers,
-        "correct_answers_percentage": str(correct_answers_percentage) + "%",
-        "grade": grade,
-    }
-    return render(request, 'mysite/results.html', context)
-
-def end_test_id(request, test_id):
-    test = TrainingTest.objects.get(id=int(test_id))
-    correct_answers = test.exercise_set.filter(test=test, answer_is_correct=True).count()
-    correct_answers_percentage = correct_answers / test.apparatus.exercises_amount * 100
 
 
-    solved_exercises = Exercise.objects.filter(test=int(test_id), time_spent__isnull=False)
     history = []
     print(test.apparatus.exercises_amount)
     for exercise in solved_exercises:
@@ -172,7 +148,7 @@ def end_test_id(request, test_id):
         "correct_answers": correct_answers,
         'exercises_amount': test.apparatus.exercises_amount,
         "correct_answers_percentage": str(correct_answers_percentage) + "%",
-        "grade": test.grade,
+        "grade": grade,
         "history": history
     }
     return render(request, 'mysite/results.html', context)
@@ -228,7 +204,28 @@ def home1(request):
     return HttpResponseRedirect(idHome)
 
 
-
+# def end_test(request):
+#     test = TrainingTest.objects.filter(user_id=request.user.id).last()
+#     correct_answers = test.correct_answers
+#     exercises_amount = test.apparatus.exercises_amount
+#     correct_answers_percentage = correct_answers/exercises_amount*100
+#     if correct_answers_percentage >= test.apparatus.perfect:
+#         grade = 5
+#     elif correct_answers_percentage >= test.apparatus.good:
+#         grade = 4
+#     elif correct_answers_percentage >= test.apparatus.satisfactory:
+#         grade = 3
+#     else:
+#         grade = 2
+#     test.grade = grade
+#     test.save()
+#     context = {
+#         "time_spent": test.time_spent,
+#         "correct_answers": correct_answers,
+#         "correct_answers_percentage": str(correct_answers_percentage) + "%",
+#         "grade": grade,
+#     }
+#     return render(request, 'mysite/results.html', context)
 
     
     
