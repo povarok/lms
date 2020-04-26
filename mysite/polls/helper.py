@@ -1,6 +1,8 @@
 
 
 def get_seconds_from_string(time_string):
+    if time_string == "None":
+        return 0
     splited_time_string = time_string.split(":")
     seconds = (int(splited_time_string[0]) * 3600 + int(splited_time_string[1]) * 60 + int(round(float(splited_time_string[2]))))
     return seconds

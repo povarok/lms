@@ -6,7 +6,6 @@ from reportlab.lib.pagesizes import A4, letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.postgres.fields import JSONField
-
 from reportlab.platypus import Paragraph,SimpleDocTemplate
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
@@ -14,7 +13,7 @@ import reportlab.rl_config
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.auth.models import User
-
+from .helper import *
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -86,8 +85,8 @@ class TrainingTest(models.Model):
 
 class Exercise(models.Model):
     type = models.ForeignKey(ExerciseTypes, verbose_name=u"Тип упражнения", on_delete=models.CASCADE, default=None, blank=True, null=True)
-    test = models.ForeignKey(TrainingTest, verbose_name=u"Тест", on_delete=models.CASCADE, default=None, blank=True, null=True)
-    time_spent = models.TimeField(verbose_name=u"Потраченное время на решение", auto_now=False, auto_now_add=False, blank=True, null=True)
+    test = models.ForeignKey(TrainingTest, verbose_name=u"Тест", related_name="exercises", on_delete=models.CASCADE, default=None, blank=True, null=True)
+    time_spent = models.CharField(verbose_name=u"Потраченное время на решение", blank=True, null=True, max_length=12)
     correct_answer = models.CharField(verbose_name=u"Верный ответ", max_length=200)
     given_answer = models.CharField(verbose_name=u"Данный пользователем ответ", max_length=200)
     answer_is_correct = models.BooleanField(verbose_name=u"Проверка ответа")
@@ -96,6 +95,10 @@ class Exercise(models.Model):
 
     def __str__(self):
         return self.text + ', ' + self.test.apparatus.name + ' - ' + str(self.test.pk)
+
+    def get_spent_timestamp(self):
+        print(str(self.time_spent))
+        return get_seconds_from_string(str(self.time_spent))
 
     class Meta:
         verbose_name = u'упражнение'

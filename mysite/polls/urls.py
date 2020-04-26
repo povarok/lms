@@ -17,6 +17,8 @@ urlpatterns = [
     path('api_get_allotted_time/', views.get_allotted_time, name='get_allotted_time'),
     path('api_check_answer/', views.check_answer, name='check_answer'),
     path('api_get_history/', views.get_history, name='get_history'),
+    path('stats/', views.stats, name='stats'),
+    path('api_get_stats/', views.get_stats, name='get_stats'),
     #path('end_test/', views.end_test, name='end_test'),
     path('end_test/<int:test_id>', views.end_test_id, name='end_test_id'),
 

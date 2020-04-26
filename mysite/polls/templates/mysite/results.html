@@ -4,7 +4,6 @@
 {% block import %}
 {% load static %}
     <link rel="stylesheet" href="{% static 'polls/css/results.css' %}">
-    <script type="text/javascript" src="{% static 'polls/js/lms.js' %}"></script>
 {% endblock %}
 {% block name %}Результаты тестирования{% endblock %}
 {% block content %}
@@ -40,7 +39,7 @@
             <th>Процент верных ответов</th>
             </thead>
             <tbody>
-            <td>{{correct_answers_percentage}}</td>
+            <td>{{correct_answers_percentage|floatformat:"-1" }} %</td>
             </tbody>
         </table>
     </div>
@@ -74,7 +73,7 @@
                 <td>{{ex.text}}</td>
                 <td>{{ex.given_answer}}</td>
                 <td>{{ex.correct_answer}}</td>
-                <td>{{ex.time_spent|time:"H:i:s" }}</td>
+                <td>{{ex.time_spent}}</td>
                 <td>
                     {% if ex.is_correct%}
                     <font color="#00cc00" size="5"><i class="icon-search glyphicon glyphicon-ok-circle"></i></font>

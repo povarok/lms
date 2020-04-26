@@ -211,3 +211,40 @@ body {
     padding: 0;
 }
 */
+
+@media screen and (max-width: 600px) {
+    .info-block {
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    }
+}
+@media screen and (min-width: 601px) {
+    .info-block {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    }
+    .card {
+    margin: 2%;
+    }
+}
+
+.chart {
+    width: 1000px;
+    padding: 20px;
+}
+
+.block__row.block--center.card.big {
+    margin-bottom: 40px;
+}
+
+@media screen and (max-width: 1070px) {
+    .chart {
+        width: 100%;
+    }
+    .block__row.block--center.card.big {
+        width: 100%;
+    }
+}

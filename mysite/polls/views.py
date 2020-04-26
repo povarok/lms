@@ -5,7 +5,8 @@ from django.views import generic
 from random import randint
 from .helper import get_seconds_from_string, get_string_from_seconds
 from django.contrib.auth.decorators import login_required
-from .models import Exercise, NameForm, TrainingTest, TrainingApparatus
+from .models import Exercise, TrainingTest, TrainingApparatus
+from .serializers import TrainingTestSerializer
 from django.contrib.auth.models import User
 from polls.models import Exercise
 from django.http import HttpResponseRedirect, Http404
@@ -83,13 +84,13 @@ def create_test(request):
 
 def get_exercise(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    test.solved_exercises = test.exercise_set.filter(time_spent__isnull=False).count()
+    test.solved_exercises = test.exercises.filter(time_spent__isnull=False).count()
     exercise_index = test.solved_exercises + 1
     test.save()
     print('test time spent', get_string_from_seconds(datetime.datetime.now().timestamp() - test.time_start.timestamp()))
     time_spent = round(datetime.datetime.now().timestamp() - test.time_start.timestamp())
     if exercise_index <= test.apparatus.exercises_amount and time_spent <= get_seconds_from_string(test.apparatus.allotted_time):
-        unsolved_exercise = test.exercise_set.filter(exercise_index=exercise_index)[0]
+        unsolved_exercise = test.exercises.filter(exercise_index=exercise_index)[0]
     else:
         return JsonResponse({
             "url": "/end_test/",
@@ -105,8 +106,8 @@ def get_exercise(request):
 
 def end_test_id(request, test_id):
     test = TrainingTest.objects.get(id=int(test_id))
-    correct_answers = test.exercise_set.filter(answer_is_correct=True).count()
-    solved_exercises = test.exercise_set.filter(time_spent__isnull=False)
+    correct_answers = test.exercises.filter(answer_is_correct=True).count()
+    solved_exercises = test.exercises.filter(time_spent__isnull=False)
     exercises_amount = test.apparatus.exercises_amount
     correct_answers_percentage = correct_answers/exercises_amount*100
     if correct_answers_percentage >= test.apparatus.perfect:
@@ -125,7 +126,6 @@ def end_test_id(request, test_id):
     # print('asasas', get_string_from_seconds(time_spent))
     if not test.time_spent:
         test.time_spent = get_string_from_seconds(time_spent)
-        print('dssdsd', test.time_spent)
     test.save()
 
 
@@ -147,7 +147,7 @@ def end_test_id(request, test_id):
         "time_spent": test.time_spent,
         "correct_answers": correct_answers,
         'exercises_amount': test.apparatus.exercises_amount,
-        "correct_answers_percentage": str(correct_answers_percentage) + "%",
+        "correct_answers_percentage": correct_answers_percentage,
         "grade": grade,
         "history": history
     }
@@ -160,7 +160,7 @@ def check_answer(request):
     exercise.given_answer = req['value']
     exercise.exercise_index = req['exercise_index']
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-    exercise.time_spent = datetime.datetime.fromtimestamp(req['time_spent'])
+    exercise.time_spent = str(datetime.datetime.fromtimestamp(req['time_spent']).time()).split('.')[0]
     if str(exercise.given_answer) != '' and exercise.given_answer == exercise.correct_answer:
         is_correct = True
     else:
@@ -204,29 +204,20 @@ def home1(request):
     return HttpResponseRedirect(idHome)
 
 
-# def end_test(request):
-#     test = TrainingTest.objects.filter(user_id=request.user.id).last()
-#     correct_answers = test.correct_answers
-#     exercises_amount = test.apparatus.exercises_amount
-#     correct_answers_percentage = correct_answers/exercises_amount*100
-#     if correct_answers_percentage >= test.apparatus.perfect:
-#         grade = 5
-#     elif correct_answers_percentage >= test.apparatus.good:
-#         grade = 4
-#     elif correct_answers_percentage >= test.apparatus.satisfactory:
-#         grade = 3
-#     else:
-#         grade = 2
-#     test.grade = grade
-#     test.save()
-#     context = {
-#         "time_spent": test.time_spent,
-#         "correct_answers": correct_answers,
-#         "correct_answers_percentage": str(correct_answers_percentage) + "%",
-#         "grade": grade,
-#     }
-#     return render(request, 'mysite/results.html', context)
+def stats(request):
+    context = {
+        'tests': TrainingApparatus.objects.all()
+    }
+    return render(request, 'mysite/stats.html', context)
 
+
+def get_stats(request):
+    req = json.loads(request.body)
+    tests = TrainingTest.objects.filter(user_id=request.user.id, apparatus__name=req['trainingApparatus'],
+                                        time_spent__isnull=False)
+    serializer = TrainingTestSerializer(tests, many=True)
+    return JsonResponse({
+        'tests': serializer.data,
+    })
     
     
-

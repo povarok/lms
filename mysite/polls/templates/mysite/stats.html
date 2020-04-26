@@ -1,0 +1,72 @@
+{% extends "mysite/base.html" %}
+{% block title %}Тренажёр СИТШ{% endblock %}
+{% block train %}
+class="active"
+{% endblock %}
+{% block name %}Статистика{% endblock %}
+
+{% block import %}
+{% load static %}
+<link type="text/css" rel="stylesheet" href="{% static 'polls/css/primer.css' %}">
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script>
+        const API_GET_EXERCISE = "{% url 'polls:get_exercise' %}";
+        const API_GET_ALLOTTED_TIME = "{% url 'polls:get_allotted_time' %}";
+        const API_CHECK_ANSWER = "{% url 'polls:check_answer' %}";
+        const API_GET_HISTORY = "{% url 'polls:get_history' %}";
+        const API_GET_STATS = "{% url 'polls:get_stats' %}";
+
+
+</script>
+{% endblock %}
+{% block content %}
+{% csrf_token %}
+<script>
+        const CRSF_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+</script>
+<select class="form-control" id="apparatus-selector">
+    {% for test in tests %}
+        <option data-description="{{ test.description }}">
+            {{ test.name }}
+        </option>
+    {% endfor %}
+</select>
+<div id="test-description">
+    <span id="description-value"></span>
+</div>
+
+<section class="block__row block--center card big">
+  <div class="cart big chart" id="myChart" ></div>
+</section>
+<section class="block__row block--center card big stats">
+  <div class="cart big chart" id="myChart2" ></div>
+</section>
+<!--<section class="block__row block&#45;&#45;center card big">-->
+<!--    <div class="table-responsive">-->
+<!--        <table id="answersHistory" class="table table-striped">-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--                <th scope="col">Пример</th>-->
+<!--                <th scope="col">Данный ответ</th>-->
+<!--                <th scope="col">Правильные ответы</th>-->
+<!--                <th scope="col">Время решения</th>-->
+<!--                <th scope="col">Проверка</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody id="answersHistoryBody">-->
+
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+
+<!--</section>-->
+<script type="text/javascript" src="{% static 'polls/js/stats.js' %}"></script>
+{% endblock %}
+
+
+
+
