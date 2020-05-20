@@ -42,6 +42,7 @@ function correctPercentageChart(dataset) {
         legend: {
             enabled: false
         },
+        exporting: { enabled: false },
         title: {
             text: "Процент верных ответов",
         },
@@ -55,11 +56,22 @@ function correctPercentageChart(dataset) {
             }
         }],
         yAxis: [{
-            title: null,
+            title: {
+                text: 'Процент верных ответов',
+                style: {
+                    fontSize: '16px',
+                }
+            },
             max: 100,
         }],
         xAxis: [{
             allowDecimals: false,
+            title: {
+                text: 'Пройденные тесты, номер попытки',
+                style: {
+                    fontSize: '16px',
+                }
+            }
         }],
         plotOptions: {
             column: {
@@ -111,6 +123,7 @@ function exerciseChart(dataset) {
         legend: {
             enabled: false
         },
+        exporting: { enabled: false },
         title: {
             text: "Время верного решения примера",
         },
@@ -135,10 +148,21 @@ function exerciseChart(dataset) {
                     return (this.value+'').toHHMMSS()
                 }
             },
-            title: null,
+            title: {
+                text: 'Время, потраченное на поиск верного решения, сек',
+                style: {
+                    fontSize: '16px',
+                }
+            },
         }],
         xAxis: [{
             allowDecimals: false,
+            title: {
+                text: 'Успешно решенные примеры',
+                style: {
+                    fontSize: '16px',
+                }
+            },
         }],
         plotOptions: {
             column: {

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
-from random import randint
+from random import randint, shuffle
 from .helper import get_seconds_from_string, get_string_from_seconds
 from django.contrib.auth.decorators import login_required
 from .models import Exercise, TrainingTest, TrainingApparatus
@@ -50,33 +50,42 @@ def create_test(request):
     test.save()
     unsolved_exercises = []
     if apparatus.name == "Разложение второго слагаемого":
-        for i in range(1, apparatus.exercises_amount+1):
-            ch = (randint(2, 9))
-            chh = (randint(11-ch, 9))
-            znak = '+'
-            result = ch+chh
-            excess_value = result - 10
-            exercise_index = i
-            correct_answer = (str(chh-(chh-excess_value)) + '+' + str(chh-excess_value)).replace("'", '')
-            unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
-                                         given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
-                                         exercise_index=exercise_index)
-            unsolved_exercise.save()
-            unsolved_exercises.append(unsolved_exercise.pk)
+        first = [2, 3, 4, 5, 6, 7, 8, 9]
+        second = [9, 8, 7, 6, 5, 4, 3, 2]
+        for fn in first:
+            for sn in second:
+                if fn + sn >=11:
+                    result = fn + sn
+                    excess_value = result - 10
+                    correct_answer = (str(sn-(sn-excess_value)) + '+' + str(sn-excess_value)).replace("'",'')
+                    unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
+                                                 given_answer='', answer_is_correct=False, text=str(fn) + '+' + str(sn))
+                    unsolved_exercises.append(unsolved_exercise)
+        shuffle(unsolved_exercises)
+        unsolved_exercises[:apparatus.exercises_amount]
+        for ex in unsolved_exercises:
+            exercise_index = unsolved_exercises.index(ex) + 1
+            ex.exercise_index = exercise_index
+            ex.save()
+
     else:
-        for i in range(1, apparatus.exercises_amount+1):
-            ch = (randint(2, 9))
-            chh = (randint(11-ch, 9))
-            znak = '+'
-            result = ch+chh
-            excess_value = result - 10
-            exercise_index = i
-            correct_answer = (str(ch-(ch-excess_value)) + '+' + str(ch-excess_value)).replace("'", '')
-            unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
-                                         given_answer='', answer_is_correct=False, text=str(ch) + str(znak) + str(chh),
-                                         exercise_index=exercise_index)
-            unsolved_exercise.save()
-            unsolved_exercises.append(unsolved_exercise.pk)
+        first = [2, 3, 4, 5, 6, 7, 8, 9]
+        second = [9, 8, 7, 6, 5, 4, 3, 2]
+        for fn in first:
+            for sn in second:
+                if fn + sn >=11:
+                    result = fn + sn
+                    excess_value = result - 10
+                    correct_answer = (str(fn-(fn-excess_value)) + '+' + str(fn-excess_value)).replace("'",'')
+                    unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
+                                                 given_answer='', answer_is_correct=False, text=str(fn) + '+' + str(sn))
+                    unsolved_exercises.append(unsolved_exercise)
+        shuffle(unsolved_exercises)
+        unsolved_exercises[:apparatus.exercises_amount]
+        for ex in unsolved_exercises:
+            exercise_index = unsolved_exercises.index(ex) + 1
+            ex.exercise_index = exercise_index
+            ex.save()
     return JsonResponse({
         'status': 'ok'
     })
