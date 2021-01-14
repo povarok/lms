@@ -1,0 +1,35 @@
+{% extends "mysite/base.html" %}
+
+{% block title %}Тестовая среда СИТШ{% endblock %}
+{% block import %}
+{% load static %}
+    <link type="text/css" rel="stylesheet" href="{% static 'polls/css/control.css' %}">
+    <script type="text/javascript" src="{% static 'control/js/control.js' %}"></script>
+{% endblock %}
+{% block name %}Контроль{% endblock %}
+{% block content %}
+{% csrf_token %}
+    <script>
+        const CRSF_token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+    </script>
+{% for group in groups %}
+    {% if group.constructor.active %}
+    <div {% if not group.active %} class="disabled" {% endif %}>
+        <h2>{{group.constructor.name}}, completed: {{group.is_complete}}, active: {{group.active}}</h2>
+        <div class="test-group">
+        {% for test in group.constructor.tests %}
+            <div class="card {% if not group.active %} disabled {% endif %}" {% if group.active %} onclick="controlTestPopup('{{test|escapejs}}')" {% endif %}>
+                <span>{{test.name}}</span>
+                {% with test.control_tests|last as last %}
+                    <span>Оценка: {{ last.grade }}</span>
+                {% endwith %}
+                <span>Количество попыток: {{ test.control_tests|length }}</span>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+    <script type="text/javascript" src="{% static 'polls/js/lms.js' %}"></script>
+
+{% endblock %}

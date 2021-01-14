@@ -1,29 +1,20 @@
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.pagesizes import A4, letter
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.postgres.fields import JSONField
 from reportlab.platypus import Paragraph,SimpleDocTemplate
-from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
-import reportlab.rl_config
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.auth.models import User
 from .helper import *
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-import datetime
-from django.utils import timezone
 from django import forms
 import re
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-from reportlab.pdfgen import canvas
 
 
 

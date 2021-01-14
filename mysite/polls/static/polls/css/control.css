@@ -1,0 +1,30 @@
+h2 {
+  text-align: left;
+}
+.card {
+  min-height: 200px;
+  min-width: 200px;
+  padding: 20px;
+  margin: 20px;
+  display: flex;
+}
+.test-group {
+  display: flex;
+}
+.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.swal2-content {
+  padding: 20px;
+  font-size: 18px;
+}
+.swal2-title {
+  font-size: 24px;
+}
+.swal2-popup {
+  border-radius: 15px;
+}
+.swal2-styled.swal2-confirm {
+  font-size: 18px;
+}

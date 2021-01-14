@@ -3,6 +3,7 @@ from .models import TrainingTest, TrainingApparatus, Exercise
 from .helper import *
 import datetime
 
+
 class TrainingApparatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainingApparatus

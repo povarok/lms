@@ -21,6 +21,7 @@ from django.conf.urls import url
 
 urlpatterns = [
     path('', include('polls.urls')),
+    path('', include('control.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),
     url(r'^admin/', admin.site.urls),
     url(r'^register/$', RegisterFormView.as_view(), name='register'),
