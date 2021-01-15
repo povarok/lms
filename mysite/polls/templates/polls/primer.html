@@ -3,7 +3,13 @@
 {% block train %}
 class="active"
 {% endblock %}
-{% block name %}Тренажёр{% endblock %}
+{% block name %}
+    {% if is_control %}
+        Контрольное тестирование
+    {% else %}
+        Тренажёр
+    {% endif %}
+{% endblock %}
 
 {% block import %}
 {% load static %}

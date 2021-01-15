@@ -35,7 +35,12 @@ def get_allotted_time(request):
 
 def exercise_view(request):
     test = TrainingTest.objects.filter(user_id=request.user.id).last()
+    control_tests = ControlTest.objects.all().values_list('id', flat=True)
+    is_control = False
+    if test.id in control_tests:
+        is_control = True
     context = {
+        'is_control': is_control,
         'test_description': test.apparatus.description,
     }
     return render(request, 'polls/primer.html', context)
@@ -155,8 +160,12 @@ def end_test_id(request, test_id):
         }
         history.append(solved_exercise)
 
-
+    control_tests = ControlTest.objects.all().values_list('id', flat=True) #fixme: need rework
+    is_control = False
+    if test.id in control_tests:
+        is_control = True
     context = {
+        "is_control": is_control,
         "time_spent": test.time_spent,
         "correct_answers": correct_answers,
         'exercises_amount': test.apparatus.exercises_amount,

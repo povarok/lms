@@ -89,6 +89,10 @@
     </div>
 </div>
 
+{% if is_control %}
+<button onclick="window.location.href = '/control';" class="btn btn-primary btn" id="button-got-it"><h4>Вернуться на страницу контроля</h4></button>
+{% else %}
 <button onclick="window.location.href = '/';" class="btn btn-primary btn" id="button-got-it"><h4>Вернуться к выбору тренажера</h4></button>
+{% endif %}
 
 {% endblock %}

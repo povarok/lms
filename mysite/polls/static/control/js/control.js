@@ -31,10 +31,8 @@ function controlTestPopup(test) {
   test = test.replace(/True/g, '"true"')
   test = test.replace(/False/g, '"false"')
   test = test.replace(/'/g, '"')
-  console.log(test)
   obj = JSON.parse(test)
   obj.description = obj.description.replace(/\\/g, '')
-  console.log(obj)
   function kek() {if (obj.control_tests.length) { return 'Пройти тест еще раз' } else { return 'Начать контрольный тест' }};
   Swal.fire({
     title: obj.name,
@@ -43,9 +41,14 @@ function controlTestPopup(test) {
 //    showCancelButton: true,
 //    cancelButtonColor: '#d33',
     confirmButtonText: kek(),
+//    allowOutsideClick: false,
 //    cancelButtonText: 'Отменить',
   })
-  .then(function(){
-  createControlTest(obj);
-  })
-}
+  .then(
+    result => {
+    if (result.value) {
+      createControlTest(obj);
+    } else {
+    }
+  }
+)}
