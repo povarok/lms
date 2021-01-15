@@ -2,6 +2,7 @@ function createTest() {
     var selector = document.getElementById("apparatus-selector");
     var selectedApparatus = selector.options[selector.selectedIndex].text;
     var data = {
+    testType: 'training',
     trainingApparatus: selectedApparatus,
     timeStart: new Date(),
     }

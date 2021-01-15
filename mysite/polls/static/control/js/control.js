@@ -1,3 +1,30 @@
+function createControlTest(obj) {
+    var selectedApparatus = obj.name;
+    var data = {
+    testType: 'control',
+    trainingApparatus: selectedApparatus,
+    timeStart: new Date(),
+    }
+    $.ajax({
+        method: 'POST',
+        url: '/api_create_test/',
+        contentType: 'application/json',
+        crossDomain: true,
+        headers: {
+            "X-CSRFToken":CRSF_token
+        },
+        data: JSON.stringify(data),
+        beforeSend: function() {
+        },
+        complete: function() {
+        },
+        success: function (r) {
+            window.location.href='/primer';
+        }
+    }).fail(function (err) {
+        console.log(`[AJAX] error `, err);
+    });
+}
 function controlTestPopup(test) {
   test = test.replace(/"/g, '\\"')
   test = test.replace(/None/g, '"none"')
@@ -17,5 +44,8 @@ function controlTestPopup(test) {
 //    cancelButtonColor: '#d33',
     confirmButtonText: kek(),
 //    cancelButtonText: 'Отменить',
+  })
+  .then(function(){
+  createControlTest(obj);
   })
 }

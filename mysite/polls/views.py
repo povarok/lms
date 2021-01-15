@@ -9,6 +9,7 @@ from .models import Exercise, TrainingTest, TrainingApparatus
 from .serializers import TrainingTestSerializer
 from django.contrib.auth.models import User
 from polls.models import Exercise
+from control.models import ControlTest
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -45,7 +46,10 @@ def create_test(request):
     req = json.loads(request.body)
     apparatus = TrainingApparatus.objects.get(name=req['trainingApparatus'])
     user = User.objects.get(pk=request.user.id)
-    test = TrainingTest(apparatus=apparatus, user=user, grade=0)
+    if req['testType'] == 'training':
+        test = TrainingTest(apparatus=apparatus, user=user, grade=0)
+    elif req['testType'] == 'control':
+        test = ControlTest(apparatus=apparatus, user=user, grade=0)
     test.time_start = datetime.datetime.now()
     test.save()
     unsolved_exercises = []
