@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': DB_NAME,
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
-        'HOST': DB_NAME,   # Or an IP Address that your DB is hosted on
+        'HOST': DB_HOST,   # Or an IP Address that your DB is hosted on
         'PORT': DB_PORT,
     }
 }
