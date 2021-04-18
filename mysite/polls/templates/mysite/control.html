@@ -15,7 +15,7 @@
 {% for group in groups %}
     {% if group.constructor.active %}
     <div {% if not group.active %} class="disabled" {% endif %}>
-        <h2>{{group.constructor.name}}, completed: {{group.is_complete}}, active: {{group.active}}</h2>
+        <h2>{{group.constructor.name}}</h2>
         <div class="test-group">
         {% for test in group.constructor.tests %}
             <div class="card {% if not group.active %} disabled {% endif %}" {% if group.active %} onclick="controlTestPopup('{{test|escapejs}}')" {% endif %}>
