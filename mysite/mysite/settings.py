@@ -31,9 +31,9 @@ DB_PORT = os.getenv('DB_PORT')
 SECRET_KEY = 'o+b)l!^sh_-0&zlo2vg8@hgfzaz$tht_c&6^8)x#odfsl8=in&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
 
 # Application definition
 
