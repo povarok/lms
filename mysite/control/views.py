@@ -11,11 +11,13 @@ def control_page(request):
         groups.append(group)
     serializer = UserTestGroupSerializer(groups, many=True, read_only=True)
     groups = serializer.data
+    print(len(groups))
     for group in groups:
         for test in group['constructor']['tests']:
             test['control_tests'] = ControlTestSerializer(ControlTest.objects.filter(user=request.user, apparatus=test['id']), many=True, read_only=True).data
         group['active'] = True
         if groups.index(group) > 0:
+            print(groups.index(group))
             if not groups[groups.index(group) - 1]['is_complete']:
                 group['active'] = False
     context = {

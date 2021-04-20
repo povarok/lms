@@ -32,7 +32,7 @@
         <div class="navbar-collapse collapse" id="mN">
             <ul class="nav navbar-nav navbar-right">
                 <li><a>Вы вошли как {{ user.username }}</a></li>
-                {% if user.username == "admin" %}
+                {% if user.is_admin %}
                 <li><a href="/admin/">Панель администратора</a></li>
                 {% endif %}
                 <li><a href="/">Тренажёры</a></li>

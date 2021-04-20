@@ -8,6 +8,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.auth.models import User
+from account.models import Account
 from .helper import *
 
 from django.db import models
@@ -15,9 +16,6 @@ from django import forms
 import re
 from django.forms import ModelForm
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-
-
-
 
 
 # Create your models here.
@@ -32,6 +30,7 @@ class ExerciseTypes(models.Model):
         verbose_name = u'тип упражнения'
         verbose_name_plural = u'типы упражнения'
 
+
 class Grades(models.Model):
     perfect = models.PositiveIntegerField(verbose_name="Отлично")
     good = models.PositiveIntegerField(verbose_name="Хорошо")
@@ -41,6 +40,7 @@ class Grades(models.Model):
         return self.name
     class Meta:
         abstract = True
+
 
 class TrainingApparatus(Grades):
     name = models.CharField(verbose_name=u"Название тренажера", max_length=200)
@@ -57,10 +57,11 @@ class TrainingApparatus(Grades):
         verbose_name = u'тренажер'
         verbose_name_plural = u'тренажеры'
 
+
 class TrainingTest(models.Model):
     apparatus = models.ForeignKey(TrainingApparatus, verbose_name=u"Тип тренажера", on_delete=models.SET_DEFAULT,
                                   default=None, blank=True, null=True)
-    user = models.ForeignKey(User, verbose_name=u"Пользователь", on_delete=models.CASCADE, default=None, blank=True, null=True)
+    user = models.ForeignKey(Account, verbose_name=u"Пользователь", on_delete=models.CASCADE, default=None, blank=True, null=True)
     grade = models.PositiveIntegerField(verbose_name=u"Оценка")
     solved_exercises = models.PositiveIntegerField(verbose_name=u"Количество решенных примеров", default=0)
     correct_answers = models.PositiveIntegerField(verbose_name=u"Количество верных ответов", default=0)
@@ -73,6 +74,7 @@ class TrainingTest(models.Model):
     class Meta:
         verbose_name = u'выполненный тест'
         verbose_name_plural = u'выполненные тесты'
+
 
 class Exercise(models.Model):
     type = models.ForeignKey(ExerciseTypes, verbose_name=u"Тип упражнения", on_delete=models.CASCADE, default=None, blank=True, null=True)

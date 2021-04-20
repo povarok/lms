@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from random import randint, shuffle
@@ -7,8 +6,8 @@ from .helper import get_seconds_from_string, get_string_from_seconds
 from django.contrib.auth.decorators import login_required
 from .models import Exercise, TrainingTest, TrainingApparatus
 from .serializers import TrainingTestSerializer
-from django.contrib.auth.models import User
 from polls.models import Exercise
+from account.models import Account
 from control.models import ControlTest
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import login_required
@@ -50,7 +49,7 @@ def create_test(request):
     print(request.body)
     req = json.loads(request.body)
     apparatus = TrainingApparatus.objects.get(name=req['trainingApparatus'])
-    user = User.objects.get(pk=request.user.id)
+    user = Account.objects.get(pk=request.user.id)
     if req['testType'] == 'training':
         test = TrainingTest(apparatus=apparatus, user=user, grade=0)
     elif req['testType'] == 'control':
@@ -63,7 +62,7 @@ def create_test(request):
         second = [9, 8, 7, 6, 5, 4, 3, 2]
         for fn in first:
             for sn in second:
-                if fn + sn >=11:
+                if fn + sn >= 11:
                     result = fn + sn
                     excess_value = result - 10
                     correct_answer = (str(sn-(sn-excess_value)) + '+' + str(sn-excess_value)).replace("'",'')
@@ -77,7 +76,7 @@ def create_test(request):
             ex.exercise_index = exercise_index
             ex.save()
 
-    else:
+    elif apparatus.name == "Разложение первого слагаемого":
         first = [2, 3, 4, 5, 6, 7, 8, 9]
         second = [9, 8, 7, 6, 5, 4, 3, 2]
         for fn in first:
@@ -85,9 +84,43 @@ def create_test(request):
                 if fn + sn >=11:
                     result = fn + sn
                     excess_value = result - 10
-                    correct_answer = (str(fn-(fn-excess_value)) + '+' + str(fn-excess_value)).replace("'",'')
+                    correct_answer = f"{fn-(fn-excess_value)}+{fn-excess_value}".replace("'",'')
                     unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
-                                                 given_answer='', answer_is_correct=False, text=str(fn) + '+' + str(sn))
+                                                 given_answer='', answer_is_correct=False, text=f"{fn} + {sn}")
+                    unsolved_exercises.append(unsolved_exercise)
+        shuffle(unsolved_exercises)
+        unsolved_exercises[:apparatus.exercises_amount]
+        for ex in unsolved_exercises:
+            exercise_index = unsolved_exercises.index(ex) + 1
+            ex.exercise_index = exercise_index
+            ex.save()
+    elif apparatus.name == "Сложение":
+        first = [2, 3, 4, 5, 6, 7, 8, 9]
+        second = [9, 8, 7, 6, 5, 4, 3, 2]
+        for fn in first:
+            for sn in second:
+                if fn + sn >= 11:
+                    result = fn + sn
+                    unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=str(result),
+                                                 given_answer='', answer_is_correct=False, text=f"{fn} + {sn}")
+                    unsolved_exercises.append(unsolved_exercise)
+        shuffle(unsolved_exercises)
+        unsolved_exercises[:apparatus.exercises_amount]
+        for ex in unsolved_exercises:
+            exercise_index = unsolved_exercises.index(ex) + 1
+            ex.exercise_index = exercise_index
+            ex.save()
+    elif apparatus.name == "Разложение вычитаемого":
+        first = [18, 17, 16, 15, 14, 13, 12, 11]
+        second = [2, 3, 4, 5, 6, 7, 8, 9]
+        for fn in first:
+            for sn in second:
+                if fn - sn <= 9:
+                    result = fn - sn
+                    excess_value = fn - 10
+                    correct_answer = f"{excess_value}+{sn - excess_value}".replace("'", "")
+                    unsolved_exercise = Exercise(test=test, type=apparatus.exercises_type, time_spent=None, correct_answer=correct_answer,
+                                                 given_answer='', answer_is_correct=False, text=f"{fn} - {sn}")
                     unsolved_exercises.append(unsolved_exercise)
         shuffle(unsolved_exercises)
         unsolved_exercises[:apparatus.exercises_amount]
@@ -141,7 +174,6 @@ def end_test_id(request, test_id):
     test.correct_answers = correct_answers
     time_spent = round(datetime.datetime.now().timestamp() - test.time_start.timestamp())
     print ('time spent in seconds', time_spent)
-    # print('asasas', get_string_from_seconds(time_spent))
     if not test.time_spent:
         test.time_spent = get_string_from_seconds(time_spent)
     test.save()
