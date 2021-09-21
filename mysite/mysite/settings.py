@@ -39,6 +39,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
 
 INSTALLED_APPS = [
     'jet',
+    'ckeditor',
     'crispy_forms',
     'polls.apps.PollsConfig',
     'django.contrib.admin',
@@ -48,10 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'control',
-    'account'
+    'account',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,6 +143,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "mysite/polls/static")
+
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login'

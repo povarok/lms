@@ -10,6 +10,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from django.contrib.auth.models import User
 from account.models import Account
 from .helper import *
+from ckeditor.fields import RichTextField
 
 from django.db import models
 from django import forms
@@ -18,10 +19,42 @@ from django.forms import ModelForm
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 
 
-# Create your models here.
+class ExerciseVariable(models.Model):
+    VAR_TYPE_CHOICES = [
+        ('int', "Целое"),
+        ('float', "Дробное")
+    ]
+    name = models.CharField(max_length=1, verbose_name="буквенное обозначение")
+    var_type = models.CharField(max_length=5, choices=VAR_TYPE_CHOICES, default="int")
+    interval_min = models.DecimalField(verbose_name="начало интервала", help_text="Интервал для генерации переменной.",
+                                       default=0, max_digits=10, decimal_places=2)
+    interval_max = models.DecimalField(verbose_name="конец интервала", help_text="Интервал для генерации переменной.",
+                                       default=0, max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u'переменная'
+        verbose_name_plural = u'переменные'
+
+
+class ExerciseTemplate(models.Model):
+    text = models.CharField(max_length=100, verbose_name="текст шаблона",
+                            help_text="Составьте математическое выражение, используя буквенные обозначения прикрепленных переменных.")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u'шаблон'
+        verbose_name_plural = u'шаблоны'
+
+
 class ExerciseTypes(models.Model):
     name = models.CharField(verbose_name="Тип примера", max_length=200)
     description = models.TextField(verbose_name="Описание", blank=True, null=True)
+    templates = models.ManyToManyField(ExerciseTemplate, verbose_name="шаблон(ы)", related_name="types")
 
     def __str__(self):
         return self.name
@@ -38,13 +71,14 @@ class Grades(models.Model):
 
     def __str__(self):
         return self.name
+    
     class Meta:
         abstract = True
 
 
 class TrainingApparatus(Grades):
     name = models.CharField(verbose_name=u"Название тренажера", max_length=200)
-    description = models.TextField(verbose_name="Описание", max_length=1000, blank=True, null=True)
+    description = RichTextField(verbose_name="Описание", max_length=1000, blank=True, null=True)
     exercises_type = models.ForeignKey(ExerciseTypes, verbose_name=u"Тип(ы) примеров", on_delete=models.SET_DEFAULT,
                                        default=None, blank=True, null=True, help_text=u"В РАЗРАБОТКЕ")
     exercises_amount = models.PositiveIntegerField(verbose_name=u"Количество примеров", default=0)
